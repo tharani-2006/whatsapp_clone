@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
+import './Login.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -20,43 +21,41 @@ const Login = () => {
       login(response.data.user, response.data.token);
       navigate('/home');
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred');
+      setError(err.response?.data?.message || 'Invalid email or password');
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-[#00a884]">
-      {/* Header */}
-      <header className="w-full bg-[#00a884] text-white py-4">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center space-x-2">
+    <div className="login-container">
+      <header className="header">
+        <div className="header-content">
+          <div className="header-logo">
             <img 
-              src="/whatsapp-logo.png" 
+              src="./images/whatsapp.png" 
               alt="WhatsApp" 
-              className="h-6"
+              className="logo-image"
             />
-            <span className="text-xl font-light">WHATSAPP WEB</span>
+            <span className="logo-text">WhatsApp</span>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <div className="flex-1 w-full bg-[#111b21] flex justify-center items-start pt-10">
-        <div className="bg-[#202c33] p-8 rounded-lg shadow-lg w-[400px] mt-8">
-          <h2 className="text-2xl text-white mb-6 text-center">Login to WhatsApp</h2>
+      <div className="main-content">
+        <div className="login-form-container">
+          <h2 className="form-title">Login to WhatsApp</h2>
           {error && (
-            <div className="bg-red-500 text-white p-3 rounded mb-4 text-sm">
+            <div className="error-message">
               {error}
             </div>
           )}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="form">
             <div>
               <input
                 type="email"
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-3 rounded bg-[#2a3942] text-white border-none focus:ring-2 focus:ring-[#00a884] focus:outline-none"
+                className="input-field"
                 required
               />
             </div>
@@ -66,22 +65,17 @@ const Login = () => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3 rounded bg-[#2a3942] text-white border-none focus:ring-2 focus:ring-[#00a884] focus:outline-none"
+                className="input-field"
                 required
               />
             </div>
-            <button
-              type="submit"
-              className="w-full bg-[#00a884] text-white p-3 rounded hover:bg-[#008f6f] transition-colors"
-            >
+            <button type="submit" className="submit-button">
               Login
             </button>
           </form>
-          <p className="mt-6 text-center text-[#aebac1]">
+          <p className="register-link">
             Don't have an account?{' '}
-            <Link to="/register" className="text-[#00a884] hover:text-[#008f6f]">
-              Register
-            </Link>
+            <Link to="/register">Register</Link>
           </p>
         </div>
       </div>
