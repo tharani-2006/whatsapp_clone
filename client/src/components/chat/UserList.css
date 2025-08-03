@@ -1,0 +1,39 @@
+.user-list {
+  background-color: #202c33;
+  padding: 1rem;
+  border-bottom: 1px solid #313d45;
+}
+
+.user-list-title {
+  color: #00a884;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  padding-left: 0.5rem;
+}
+
+.user-item {
+  padding: 0.75rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.user-item:hover {
+  background-color: #2a3942;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.user-email {
+  color: #e9edef;
+  font-size: 0.9rem;
+}
+
+.user-list-loading {
+  color: #8696a0;
+  padding: 1rem;
+  text-align: center;
+}

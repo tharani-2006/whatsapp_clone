@@ -2,6 +2,7 @@ const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const auth = require('../middleware/auth');
 
 // Register
 router.post('/register', async (req, res) => {
@@ -70,6 +71,19 @@ router.post('/login', async (req, res) => {
       token,
       user: { id: user._id, email: user.email }
     });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Get all users (excluding the logged-in user)
+router.get('/users', auth, async (req, res) => {
+  try {
+    const users = await User.find(
+      { _id: { $ne: req.user._id } },
+      'email'
+    );
+    res.json(users);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
