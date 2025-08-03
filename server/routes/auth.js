@@ -89,4 +89,26 @@ router.get('/users', auth, async (req, res) => {
   }
 });
 
+// Search for a user by email (excluding the logged-in user)
+router.get('/users/search', auth, async (req, res) => {
+  try {
+    const { email } = req.query;
+    const user = await User.findOne(
+      { 
+        email: email.toLowerCase(),
+        _id: { $ne: req.user._id }
+      },
+      'email'
+    );
+    
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;

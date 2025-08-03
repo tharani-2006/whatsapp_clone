@@ -122,6 +122,7 @@ const ChatWindow = ({ selectedChat }) => {
     }
   };
 
+  // If no chat is selected, show empty state
   if (!selectedChat) {
     return (
       <div className="chat-window empty-chat">
@@ -130,12 +131,12 @@ const ChatWindow = ({ selectedChat }) => {
     );
   }
 
+  const otherParticipant = selectedChat.participants?.find(p => p._id !== user?.id);
+
   return (
     <div className="chat-window">
       <div className="chat-header">
-        <span>
-          {selectedChat.participants.find(p => p._id !== user?.id)?.email}
-        </span>
+        <span>{otherParticipant?.email || 'Loading...'}</span>
         {isTyping && <div className="typing-indicator">typing...</div>}
       </div>
 
