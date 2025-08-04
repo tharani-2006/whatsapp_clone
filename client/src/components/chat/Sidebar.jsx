@@ -1,30 +1,39 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import UserList from './UserList';
-import axios from 'axios';
+import axios from '../../utils/axios';
 import './Sidebar.css';
+import Profile from '../Profile';
 
 const Sidebar = ({ onChatSelect, selectedChat }) => {
   const [showUserList, setShowUserList] = useState(false);
   const [chats, setChats] = useState([]);
-  const { user } = useAuth();
+  const [showProfile, setShowProfile] = useState(false);
+  const { user, token } = useAuth();
 
   useEffect(() => {
     const fetchChats = async () => {
+      if (!token) return;
+
       try {
         const response = await axios.get('http://localhost:5000/api/chats', {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
+            Authorization: `Bearer ${token}`
           }
         });
         setChats(response.data);
       } catch (err) {
-        console.error('Error fetching chats:', err);
+        if (err.response?.status === 401) {
+          // Handle unauthorized error - maybe logout the user
+          console.log('Session expired. Please login again.');
+        } else {
+          console.error('Error fetching chats:', err);
+        }
       }
     };
 
     fetchChats();
-  }, []);
+  }, [token]);
 
   const handleUserSelect = (chat) => {
     setShowUserList(false);
@@ -35,7 +44,13 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
     <div className="sidebar">
       <div className="sidebar-header">
         <div className="user-info">
-          <span>{user?.email}</span>
+          <img
+            src={user?.profilePic || '/default-avatar.png'}
+            alt="Profile"
+            className="profile-pic"
+            onClick={() => setShowProfile(true)}
+          />
+          <span>{user?.name || user?.email}</span>
         </div>
         <button 
           className="new-chat-button"
@@ -67,6 +82,8 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
           ))}
         </div>
       )}
+
+      {showProfile && <Profile onClose={() => setShowProfile(false)} />}
     </div>
   );
 };

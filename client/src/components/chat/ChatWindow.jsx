@@ -1,38 +1,22 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useSocket } from '../../context/SocketContext';
-import axios from 'axios';
+import axios from '../../utils/axios';
 import './ChatWindow.css';
 
 const ChatWindow = ({ selectedChat }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
-  const [typingTimeout, setTypingTimeout] = useState(null);
   const { user } = useAuth();
-  const socket = useSocket();
   const messagesEndRef = useRef(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  // Fetch messages when a chat is selected
   useEffect(() => {
     const fetchMessages = async () => {
-      if (!selectedChat) return;
+      if (!selectedChat?._id) return;
       
       setLoading(true);
       try {
-        const response = await axios.get(
-          `http://localhost:5000/api/chat/${selectedChat._id}/messages`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-          }
-        );
+        const response = await axios.get(`/chat/${selectedChat._id}/messages`);
         setMessages(response.data);
         scrollToBottom();
       } catch (err) {
@@ -43,49 +27,10 @@ const ChatWindow = ({ selectedChat }) => {
     };
 
     fetchMessages();
-  }, [selectedChat?._id]); // Add dependency on selectedChat._id
+  }, [selectedChat?._id]);
 
-  useEffect(() => {
-    if (socket) {
-      // Listen for new messages
-      socket.on('receive_message', (messageData) => {
-        if (messageData.chatId === selectedChat?._id) {
-          setMessages(prev => [...prev, messageData]);
-          scrollToBottom();
-        }
-      });
-
-      // Listen for typing status
-      socket.on('user_typing', (data) => {
-        if (data.chatId === selectedChat?._id && data.userId !== user.id) {
-          setIsTyping(true);
-          setTimeout(() => setIsTyping(false), 3000);
-        }
-      });
-
-      return () => {
-        socket.off('receive_message');
-        socket.off('user_typing');
-      };
-    }
-  }, [socket, selectedChat, user]);
-
-  const handleTyping = () => {
-    if (socket && selectedChat) {
-      if (typingTimeout) clearTimeout(typingTimeout);
-
-      socket.emit('typing', {
-        chatId: selectedChat._id,
-        userId: user.id,
-        recipientId: selectedChat.participants.find(p => p._id !== user.id)?._id
-      });
-
-      const timeout = setTimeout(() => {
-        setIsTyping(false);
-      }, 3000);
-
-      setTypingTimeout(timeout);
-    }
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleSendMessage = async (e) => {
@@ -93,26 +38,10 @@ const ChatWindow = ({ selectedChat }) => {
     if (!newMessage.trim() || !selectedChat) return;
 
     try {
-      const response = await axios.post(
-        'http://localhost:5000/api/message',
-        {
-          chatId: selectedChat._id,
-          content: newMessage
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        }
-      );
-
-      // Emit message through socket
-      if (socket) {
-        socket.emit('send_message', {
-          ...response.data,
-          recipientId: selectedChat.participants.find(p => p._id !== user.id)?._id
-        });
-      }
+      const response = await axios.post('/message', {
+        chatId: selectedChat._id,
+        content: newMessage
+      });
 
       setMessages(prev => [...prev, response.data]);
       setNewMessage('');
@@ -137,7 +66,6 @@ const ChatWindow = ({ selectedChat }) => {
     <div className="chat-window">
       <div className="chat-header">
         <span>{otherParticipant?.email || 'Loading...'}</span>
-        {isTyping && <div className="typing-indicator">typing...</div>}
       </div>
 
       <div className="messages-container">
@@ -165,10 +93,7 @@ const ChatWindow = ({ selectedChat }) => {
         <input
           type="text"
           value={newMessage}
-          onChange={(e) => {
-            setNewMessage(e.target.value);
-            handleTyping();
-          }}
+          onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type a message"
         />
         <button type="submit">Send</button>

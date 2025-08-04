@@ -74,7 +74,7 @@ router.post('/message', auth, async (req, res) => {
 router.get('/chat/:chatId/messages', auth, async (req, res) => {
   try {
     const messages = await Message.find({ chatId: req.params.chatId })
-      .populate('sender', 'email')
+      .populate('sender', 'email name profilePic')
       .sort('createdAt');
     
     res.json(messages);

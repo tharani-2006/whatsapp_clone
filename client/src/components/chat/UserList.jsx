@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import axios from 'axios';
+import axios from '../../utils/axios';
 import './UserList.css';
 
 const UserList = ({ onUserSelect }) => {
@@ -19,45 +19,16 @@ const UserList = ({ onUserSelect }) => {
     setSearchResult(null);
 
     try {
-      const response = await axios.get(
-        `http://localhost:5000/api/users/search?email=${searchEmail}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        }
-      );
-      
-      if (response.data) {
-        if (response.data._id === user.id) {
-          setError("This is your email address");
-        } else {
-          setSearchResult(response.data);
-        }
+      const response = await axios.get(`/users/search?email=${searchEmail}`);
+      if (response.data._id === user.id) {
+        setError("This is your email address");
       } else {
-        setError('User not found');
+        setSearchResult(response.data);
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Error searching for user');
+      setError(err.response?.data?.message || 'User not found');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const startChat = async (selectedUser) => {
-    try {
-      const response = await axios.post(
-        'http://localhost:5000/api/chat',
-        { userId: selectedUser._id },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
-          }
-        }
-      );
-      onUserSelect(response.data);
-    } catch (err) {
-      console.error('Error starting chat:', err);
     }
   };
 
@@ -82,18 +53,9 @@ const UserList = ({ onUserSelect }) => {
 
       {searchResult && (
         <div className="search-result">
-          <div
-            className="user-item"
-            onClick={() => onUserSelect(searchResult)}
-          >
+          <div className="user-item" onClick={() => onUserSelect(searchResult)}>
             <div className="user-info">
               <span className="user-email">{searchResult.email}</span>
-              <button 
-                className="start-chat-button"
-                onClick={() => startChat(searchResult)}
-              >
-                Start Chat
-              </button>
             </div>
           </div>
         </div>

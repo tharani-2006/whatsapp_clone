@@ -5,17 +5,33 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    lowercase: true,
+    trim: true,
+    lowercase: true
   },
   password: {
     type: String,
-    required: true,
-    minlength: 6,
+    required: true
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
+  name: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  phone: {
+    type: String,
+    trim: true,
+    default: ''
+  },
+  about: {
+    type: String,
+    default: 'Hey there! I am using WhatsApp'
+  },
+  profilePic: {
+    type: String,
+    default: '/default-avatar.png'
   }
+}, {
+  timestamps: true
 });
 
 module.exports = mongoose.model('User', userSchema);

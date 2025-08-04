@@ -111,4 +111,20 @@ router.get('/users/search', auth, async (req, res) => {
   }
 });
 
+// Update user profile
+router.put('/user/profile', auth, async (req, res) => {
+  try {
+    const { name, about } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { name, about },
+      { new: true }
+    ).select('-password');
+    
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;
