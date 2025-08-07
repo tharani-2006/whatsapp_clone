@@ -3,10 +3,13 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
+const path = require('path');
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const chatRoutes = require('./routes/chat');
+const Chat = require('./models/Chat');
+const Message = require('./models/Message');
 
 
 const app = express();
@@ -24,17 +27,24 @@ const onlineUsers = new Map();
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
-  // Handle user connection
+  // Store user's socket id
   socket.on('user_connected', (userId) => {
     onlineUsers.set(userId, socket.id);
-    io.emit('user_status', { userId, status: 'online' });
+    console.log('User mapped:', userId, socket.id);
   });
 
-  // Handle private messages
-  socket.on('send_message', async (messageData) => {
-    const recipientSocket = onlineUsers.get(messageData.recipientId);
-    if (recipientSocket) {
-      io.to(recipientSocket).emit('receive_message', messageData);
+  socket.on('join_chat', (chatId) => {
+    socket.join(chatId);
+    console.log('User joined chat:', chatId);
+  });
+
+  // Handle new message
+  socket.on('new_message', async (messageData) => {
+    try {
+      // Broadcast to everyone in the chat room immediately
+      io.in(messageData.chatId).emit('receive_message', messageData);
+    } catch (err) {
+      console.error('Error broadcasting message:', err);
     }
   });
 
@@ -51,26 +61,20 @@ io.on('connection', (socket) => {
 
   // Handle user disconnect
   socket.on('disconnect', () => {
-    let disconnectedUserId;
-    onlineUsers.forEach((socketId, userId) => {
+    // Remove user from online users
+    for (const [userId, socketId] of onlineUsers.entries()) {
       if (socketId === socket.id) {
-        disconnectedUserId = userId;
+        onlineUsers.delete(userId);
+        break;
       }
-    });
-
-    if (disconnectedUserId) {
-      onlineUsers.delete(disconnectedUserId);
-      io.emit('user_status', {
-        userId: disconnectedUserId,
-        status: 'offline'
-      });
     }
+    console.log('User disconnected:', socket.id);
   });
 });
 
 app.use(cors());
 app.use(express.json());
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
 app.use('/api', authRoutes);

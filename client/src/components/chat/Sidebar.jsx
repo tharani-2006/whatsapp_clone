@@ -4,8 +4,9 @@ import UserList from './UserList';
 import axios from '../../utils/axios';
 import './Sidebar.css';
 import Profile from '../Profile';
+import Avatar from '../common/Avatar';
 
-const Sidebar = ({ onChatSelect, selectedChat }) => {
+const Sidebar = ({ onChatSelect, selectedChat, socket }) => {
   const [showUserList, setShowUserList] = useState(false);
   const [chats, setChats] = useState([]);
   const [showProfile, setShowProfile] = useState(false);
@@ -13,27 +14,25 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
 
   useEffect(() => {
     const fetchChats = async () => {
-      if (!token) return;
-
       try {
-        const response = await axios.get('http://localhost:5000/api/chats', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
+        const response = await axios.get('/chats');
         setChats(response.data);
       } catch (err) {
-        if (err.response?.status === 401) {
-          // Handle unauthorized error - maybe logout the user
-          console.log('Session expired. Please login again.');
-        } else {
-          console.error('Error fetching chats:', err);
-        }
+        console.error('Error fetching chats:', err);
       }
     };
 
     fetchChats();
-  }, [token]);
+
+    // Listen for profile updates
+    socket?.on('profile_updated', () => {
+      fetchChats();
+    });
+
+    return () => {
+      socket?.off('profile_updated');
+    };
+  }, [socket]);
 
   const handleUserSelect = (chat) => {
     setShowUserList(false);
@@ -64,22 +63,28 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
         <UserList onUserSelect={handleUserSelect} />
       ) : (
         <div className="chat-list">
-          {chats.map(chat => (
-            <div
-              key={chat._id}
-              className={`chat-item ${selectedChat?._id === chat._id ? 'selected' : ''}`}
-              onClick={() => onChatSelect(chat)}
-            >
-              <div className="chat-info">
-                <span className="chat-name">
-                  {chat.participants.find(p => p._id !== user?.id)?.email}
-                </span>
-                <span className="last-message">
-                  {chat.lastMessage?.content || 'No messages yet'}
-                </span>
+          {chats.map(chat => {
+            const otherUser = chat.participants.find(p => p._id !== user?.id);
+            return (
+              <div
+                key={chat._id}
+                className={`chat-item ${selectedChat?._id === chat._id ? 'selected' : ''}`}
+                onClick={() => onChatSelect(chat)}
+              >
+                <div className="chat-avatar">
+                  <Avatar user={otherUser} size={48} />
+                </div>
+                <div className="chat-info">
+                  <span className="chat-name">
+                    {otherUser?.name || otherUser?.email}
+                  </span>
+                  <span className="last-message">
+                    {chat.lastMessage?.content || 'No messages yet'}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

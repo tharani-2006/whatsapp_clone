@@ -13,10 +13,20 @@
 }
 
 .chat-header {
-  padding: 16px;
   background-color: #202c33;
+  padding: 10px;
+  border-bottom: 1px solid #2f3b43;
+}
+
+.chat-header-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chat-header-user span {
   color: #e9edef;
-  border-bottom: 1px solid #313d45;
+  font-size: 1rem;
 }
 
 .messages-container {

@@ -10,8 +10,14 @@ router.get('/chats', auth, async (req, res) => {
     const chats = await Chat.find({
       participants: req.user._id
     })
-    .populate('participants', 'email')
-    .populate('lastMessage')
+    .populate('participants', 'email name profilePic')
+    .populate({
+      path: 'lastMessage',
+      populate: {
+        path: 'sender',
+        select: 'email name profilePic'
+      }
+    })
     .sort('-updatedAt');
     
     res.json(chats);
@@ -52,19 +58,24 @@ router.post('/message', auth, async (req, res) => {
   try {
     const { chatId, content } = req.body;
 
-    const message = await Message.create({
+    // Create and save message
+    const message = new Message({
       chatId,
       sender: req.user._id,
       content
     });
+    await message.save();
+
+    // Populate sender details
+    await message.populate('sender', 'email name profilePic');
 
     // Update last message in chat
     await Chat.findByIdAndUpdate(chatId, {
-      lastMessage: message._id
+      lastMessage: message._id,
+      updatedAt: new Date()
     });
 
-    await message.populate('sender', 'email');
-    res.json(message);
+    res.status(201).json(message);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -75,8 +86,7 @@ router.get('/chat/:chatId/messages', auth, async (req, res) => {
   try {
     const messages = await Message.find({ chatId: req.params.chatId })
       .populate('sender', 'email name profilePic')
-      .sort('createdAt');
-    
+      .sort({ createdAt: 1 });
     res.json(messages);
   } catch (err) {
     res.status(500).json({ message: err.message });

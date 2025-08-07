@@ -25,8 +25,11 @@
 }
 
 .chat-item {
-  padding: 16px;
+  display: flex;
+  align-items: center;
+  padding: 12px;
   cursor: pointer;
+  transition: background-color 0.2s;
   border-bottom: 1px solid #313d45;
   color: #e9edef;
 }
@@ -39,19 +42,28 @@
   background-color: #2a3942;
 }
 
+.chat-avatar {
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
 .chat-info {
-  display: flex;
-  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
 }
 
 .chat-name {
-  font-weight: 500;
+  display: block;
+  color: #e9edef;
   margin-bottom: 4px;
 }
 
 .last-message {
-  font-size: 0.9em;
   color: #8696a0;
+  font-size: 0.9em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .new-chat-button {
