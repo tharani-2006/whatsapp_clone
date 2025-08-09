@@ -91,11 +91,10 @@ const ChatWindow = ({ selectedChat }) => {
   if (!selectedChat) {
     return (
       <div className="chat-window empty-chat">
-        <span>Select a chat to start messaging</span>
+        <span>Select chat to start messaging</span>
       </div>
     );
   }
-
   return (
     <div className="chat-window">
       <div className="chat-header">
