@@ -26,6 +26,29 @@ router.get('/chats', auth, async (req, res) => {
   }
 });
 
+// Get single chat with populated data
+router.get('/chat/:id', auth, async (req, res) => {
+  try {
+    const chat = await Chat.findById(req.params.id)
+      .populate('participants', 'email name profilePic phone about')
+      .populate({
+        path: 'lastMessage',
+        populate: {
+          path: 'sender',
+          select: 'email name profilePic'
+        }
+      });
+    
+    if (!chat) {
+      return res.status(404).json({ message: 'Chat not found' });
+    }
+
+    res.json(chat);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // Create or get private chat
 router.post('/chat', auth, async (req, res) => {
   try {

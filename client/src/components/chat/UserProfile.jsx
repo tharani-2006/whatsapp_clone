@@ -3,6 +3,15 @@ import Avatar from '../common/Avatar';
 import './UserProfile.css';
 
 const UserProfile = ({ user, onClose }) => {
+  if (!user) return null;
+
+  // Format phone number if it exists
+  const formatPhoneNumber = (phone) => {
+    if (!phone) return 'Not available';
+    // Add spacing for better readability
+    return phone.replace(/(\d{2})(\d{5})(\d{5})/, '$1 $2 $3');
+  };
+
   return (
     <div className="user-profile-modal">
       <div className="user-profile-content">
@@ -22,13 +31,13 @@ const UserProfile = ({ user, onClose }) => {
           </div>
 
           <div className="info-section">
-            <h3>About</h3>
-            <p>{user.about || 'Hey there! I am using WhatsApp'}</p>
+            <h3>Phone</h3>
+            <p>{formatPhoneNumber(user.phone)}</p>
           </div>
 
           <div className="info-section">
-            <h3>Phone</h3>
-            <p>{user.phone || 'Not available'}</p>
+            <h3>About</h3>
+            <p>{user.about || 'Hey there! I am using WhatsApp'}</p>
           </div>
 
           <div className="info-section">

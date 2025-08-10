@@ -11,6 +11,7 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
   const [showUserList, setShowUserList] = useState(false);
   const [chats, setChats] = useState([]);
   const [showProfile, setShowProfile] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
   const { user } = useAuth();
 
   const fetchChats = async () => {
@@ -36,6 +37,11 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
     setShowUserList(false);
   };
 
+  const handleAvatarClick = (e, user) => {
+    e.stopPropagation(); // Prevent chat selection
+    setSelectedUser(user);
+  };
+
   return (
     <div className="sidebar">
       <div className="sidebar-header">
@@ -59,7 +65,10 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
               className={`chat-item ${selectedChat?._id === chat._id ? 'selected' : ''}`}
               onClick={() => onChatSelect(chat)}
             >
-              <div className="chat-avatar">
+              <div 
+                className="chat-avatar"
+                onClick={(e) => handleAvatarClick(e, otherUser)}
+              >
                 <Avatar user={otherUser} size={48} />
               </div>
               <div className="chat-info">
@@ -74,6 +83,14 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
           );
         })}
       </div>
+
+      {/* Add UserProfile modal */}
+      {selectedUser && (
+        <UserProfile 
+          user={selectedUser} 
+          onClose={() => setSelectedUser(null)} 
+        />
+      )}
 
       {showUserList && (
         <UserList 

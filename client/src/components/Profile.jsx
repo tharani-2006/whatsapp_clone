@@ -6,38 +6,11 @@ import './Profile.css';
 
 const Profile = ({ onClose }) => {
   const { user, login } = useAuth();
-  const [name, setName] = useState(user?.name || '');
-  const [about, setAbout] = useState(user?.about || '');
-  const [profilePic, setProfilePic] = useState(user?.profilePic || '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [name, setName] = useState(user?.name || '');
+  const [about, setAbout] = useState(user?.about || '');
   const fileInputRef = useRef(null);
-
-  const handleImageChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append('profilePic', file);
-
-    try {
-      setLoading(true);
-      const response = await axios.post('/user/profile-picture', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      
-      // Update local state and context with full URL
-      const updatedUser = { ...user, profilePic: response.data.profilePic };
-      setProfilePic(response.data.profilePic);
-      login(updatedUser, localStorage.getItem('token'));
-    } catch (err) {
-      setError('Failed to upload profile picture');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,11 +23,49 @@ const Profile = ({ onClose }) => {
         about
       });
 
-      // Update the user in context with new profile data
+      // Update user context with new profile data
       login({ ...user, ...response.data }, localStorage.getItem('token'));
       onClose();
     } catch (err) {
       setError(err.response?.data?.message || 'Error updating profile');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('profilePic', file);
+
+    try {
+      setLoading(true);
+      setError('');
+
+      const response = await axios.post('/user/profile-picture', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      // Update the user context with the new profile picture URL
+      const updatedUser = {
+        ...user,
+        profilePic: response.data.profilePic
+      };
+
+      // Update local storage and context
+      login(updatedUser, localStorage.getItem('token'));
+   
+      // Force a re-render of the Avatar component
+      const event = new Event('profileUpdated');
+      window.dispatchEvent(event);
+
+    } catch (err) {
+      console.error('Error uploading profile picture:', err);
+      setError('Failed to upload profile picture');
     } finally {
       setLoading(false);
     }
@@ -69,10 +80,21 @@ const Profile = ({ onClose }) => {
         </div>
 
         <div className="profile-picture-container">
-          <div className="profile-picture" onClick={() => fileInputRef.current?.click()}>
-            <Avatar user={user} size={200} />
+          <div 
+            className="profile-picture" 
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <Avatar 
+              user={user} 
+              size={200} 
+              key={user.profilePic}
+            />
             <div className="profile-picture-overlay">
-              <span>CHANGE PROFILE PHOTO</span>
+              {loading ? (
+                <span>Uploading...</span>
+              ) : (
+                <span>CHANGE PROFILE PHOTO</span>
+              )}
             </div>
           </div>
           <input

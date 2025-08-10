@@ -33,29 +33,24 @@ const ChatWindow = ({ selectedChat }) => {
     fetchMessages();
   }, [selectedChat?._id]);
 
-  // Socket connection and message handling
+  // Handle real-time messages
   useEffect(() => {
-    if (socket && selectedChat?._id) {
-      // Join chat room
-      socket.emit('join_chat', selectedChat._id);
+    if (!socket || !selectedChat) return;
 
-      // Listen for new messages
-      const handleNewMessage = (message) => {
-        setMessages(prev => {
-          // Avoid duplicate messages
-          const messageExists = prev.some(m => m._id === message._id);
-          if (messageExists) return prev;
-          return [...prev, message];
-        });
-        scrollToBottom();
-      };
+    // Join chat room
+    socket.emit('join_chat', selectedChat._id);
 
-      socket.on('receive_message', handleNewMessage);
+    // Listen for new messages
+    const handleNewMessage = (message) => {
+      setMessages(prev => [...prev, message]);
+      scrollToBottom();
+    };
 
-      return () => {
-        socket.off('receive_message', handleNewMessage);
-      };
-    }
+    socket.on('receive_message', handleNewMessage);
+
+    return () => {
+      socket.off('receive_message', handleNewMessage);
+    };
   }, [socket, selectedChat]);
 
   const handleSendMessage = async (e) => {
@@ -63,16 +58,16 @@ const ChatWindow = ({ selectedChat }) => {
     if (!newMessage.trim() || !selectedChat) return;
 
     try {
-      const messageData = {
+      const response = await axios.post('/message', {
         chatId: selectedChat._id,
         content: newMessage
-      };
+      });
 
-      // Send to server
-      const response = await axios.post('/message', messageData);
-
-      // Emit through socket with full message data
-      socket.emit('new_message', response.data);
+      // Emit message through socket
+      socket.emit('new_message', {
+        ...response.data,
+        chatId: selectedChat._id
+      });
 
       // Update local state
       setMessages(prev => [...prev, response.data]);

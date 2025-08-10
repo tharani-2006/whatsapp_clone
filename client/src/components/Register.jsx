@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Register.css';
+import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -10,8 +11,11 @@ const Register = () => {
     name: '',
     phone: ''
   });
+  const [showOTP, setShowOTP] = useState(false);
+  const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,18 +25,31 @@ const Register = () => {
     });
   };
 
+  const handleSendOTP = async () => {
+    try {
+      await axios.post('/send-otp', { phone: formData.phone });
+      setShowOTP(true);
+      setError('');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to send OTP');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { email, password, name, phone } = formData;
+    if (!showOTP) {
+      handleSendOTP();
+      return;
+    }
 
     try {
-      await axios.post('http://localhost:5000/api/register', {
-        email,
-        password,
-        name,
-        phone
+      const response = await axios.post('/verify-otp', {
+        phone: formData.phone,
+        otp
       });
-      navigate('/login');
+      
+      login(response.data.user, response.data.token);
+      navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');
     }
@@ -101,19 +118,34 @@ const Register = () => {
             <div className="form-group">
               <input
                 type="tel"
-                placeholder="Phone Number"
+                placeholder="Phone Number (10 digits)"
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
                 className="input-field"
-                pattern="[0-9]{10}"
+                pattern="\d{10}"
                 title="Please enter a valid 10-digit phone number"
                 required
               />
             </div>
 
+            {showOTP && (
+              <div className="form-group">
+                <input
+                  type="text"
+                  placeholder="Enter OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  className="input-field"
+                  pattern="\d{6}"
+                  maxLength="6"
+                  required
+                />
+              </div>
+            )}
+
             <button type="submit" className="submit-button">
-              Register
+              {showOTP ? 'Verify OTP' : 'Get OTP'}
             </button>
           </form>
           <p className="login-link">
