@@ -4,23 +4,33 @@ import axios from 'axios';
 import './Register.css';
 
 const Register = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    name: '',
+    phone: ''
+  });
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
+    const { email, password, name, phone } = formData;
 
     try {
       await axios.post('http://localhost:5000/api/register', {
         email,
         password,
+        name,
+        phone
       });
       navigate('/login');
     } catch (err) {
@@ -52,36 +62,56 @@ const Register = () => {
             </div>
           )}
           <form onSubmit={handleSubmit} className="form">
-            <div>
+            <div className="form-group">
               <input
                 type="email"
                 placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
                 className="input-field"
                 required
               />
             </div>
-            <div>
+
+            <div className="form-group">
               <input
                 type="password"
                 placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
                 className="input-field"
                 required
               />
             </div>
-            <div>
+
+            <div className="form-group">
               <input
-                type="password"
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                type="text"
+                placeholder="Full Name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
                 className="input-field"
                 required
               />
             </div>
+
+            <div className="form-group">
+              <input
+                type="tel"
+                placeholder="Phone Number"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                className="input-field"
+                pattern="[0-9]{10}"
+                title="Please enter a valid 10-digit phone number"
+                required
+              />
+            </div>
+
             <button type="submit" className="submit-button">
               Register
             </button>

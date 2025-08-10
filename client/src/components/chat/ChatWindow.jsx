@@ -6,10 +6,10 @@ import './ChatWindow.css';
 import Avatar from '../common/Avatar';
 
 const ChatWindow = ({ selectedChat }) => {
+  const { user } = useAuth();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
   const socket = useSocket();
   const messagesEndRef = useRef(null);
 
@@ -87,23 +87,22 @@ const ChatWindow = ({ selectedChat }) => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // If no chat is selected, show empty state
-  if (!selectedChat) {
+  if (!selectedChat || !selectedChat.participants) {
     return (
       <div className="chat-window empty-chat">
-        <span>Select chat to start messaging</span>
+        <span>Select a chat to start messaging</span>
       </div>
     );
   }
+
+  const otherUser = selectedChat.participants.find(p => p._id !== user?.id);
+
   return (
     <div className="chat-window">
       <div className="chat-header">
         <div className="chat-header-user">
-          <Avatar 
-            user={selectedChat.participants.find(p => p._id !== user?.id)} 
-            size={40} 
-          />
-          <span>{selectedChat.participants.find(p => p._id !== user?.id)?.email}</span>
+          <Avatar user={otherUser} size={40} />
+          <span>{otherUser?.name || otherUser?.email}</span>
         </div>
       </div>
 
