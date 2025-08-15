@@ -15,25 +15,6 @@ const userSchema = new mongoose.Schema({
     trim: true,
     default: ''
   },
-  phone: {
-    type: String,
-    unique: true,
-    sparse: true, // Allows null/undefined values to not trigger unique constraint
-    validate: {
-      validator: function (v) {
-        return !v || /^91\d{10}$/.test(v); // Validate Indian numbers with 91 prefix
-      },
-      message: (props) => `${props.value} is not a valid Indian phone number!`,
-    },
-  },
-  isPhoneVerified: {
-    type: Boolean,
-    default: false,
-  },
-  otp: {
-    code: String,
-    expiresAt: Date
-  },
   about: {
     type: String,
     default: 'Hey there! I am using WhatsApp'
