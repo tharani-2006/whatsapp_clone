@@ -9,45 +9,20 @@ const Register = () => {
     email: '',
     password: '',
     name: '',
-    phone: ''
+    phone: '',
   });
-  const [showOTP, setShowOTP] = useState(false);
-  const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-  };
-
-  const handleSendOTP = async () => {
-    try {
-      await axios.post('/send-otp', { phone: formData.phone });
-      setShowOTP(true);
-      setError('');
-    } catch (err) {
-      setError(err.response?.data?.message || 'Failed to send OTP');
-    }
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!showOTP) {
-      handleSendOTP();
-      return;
-    }
-
     try {
-      const response = await axios.post('/verify-otp', {
-        phone: formData.phone,
-        otp
-      });
-      
+      const response = await axios.post('http://localhost:5000/api/register', formData); // Updated URL
       login(response.data.user, response.data.token);
       navigate('/');
     } catch (err) {
@@ -81,6 +56,17 @@ const Register = () => {
           <form onSubmit={handleSubmit} className="form">
             <div className="form-group">
               <input
+                type="text"
+                placeholder="Full Name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="input-field"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <input
                 type="email"
                 placeholder="Email"
                 name="email"
@@ -90,7 +76,6 @@ const Register = () => {
                 required
               />
             </div>
-
             <div className="form-group">
               <input
                 type="password"
@@ -102,19 +87,6 @@ const Register = () => {
                 required
               />
             </div>
-
-            <div className="form-group">
-              <input
-                type="text"
-                placeholder="Full Name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="input-field"
-                required
-              />
-            </div>
-
             <div className="form-group">
               <input
                 type="tel"
@@ -128,25 +100,8 @@ const Register = () => {
                 required
               />
             </div>
-
-            {showOTP && (
-              <div className="form-group">
-                <input
-                  type="text"
-                  placeholder="Enter OTP"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  className="input-field"
-                  pattern="\d{6}"
-                  maxLength="6"
-                  required
-                />
-              </div>
-            )}
-
-            <button type="submit" className="submit-button">
-              {showOTP ? 'Verify OTP' : 'Get OTP'}
-            </button>
+            {error && <div className="error-message">{error}</div>}
+            <button type="submit" className="submit-button">Register</button>
           </form>
           <p className="login-link">
             Already have an account?{' '}
