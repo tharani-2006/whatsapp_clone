@@ -152,6 +152,21 @@ const Profile = ({ onClose }) => {
             </p>
           </div>
 
+          <div className="form-group">
+            <label>
+              <span className="label-text">Phone</span>
+              <input
+                type="tel"
+                value={user?.phone || ''}
+                disabled
+                className="disabled-input"
+              />
+            </label>
+            <p className="field-info">
+              This phone number is used for future call services and cannot be changed.
+            </p>
+          </div>
+
           <div className="button-group">
             <button 
               type="button" 

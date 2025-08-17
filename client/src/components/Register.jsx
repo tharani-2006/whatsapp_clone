@@ -11,6 +11,7 @@ const Register = () => {
     email: '',
     password: '',
     name: '',
+    phone: '', // Added phone field
   });
   const [otp, setOtp] = useState('');
   const [showOtpInput, setShowOtpInput] = useState(false);
@@ -34,7 +35,7 @@ const Register = () => {
   };
 
   const sendOTP = async () => {
-    if (!formData.email || !formData.name) {
+    if (!formData.email || !formData.name || !formData.phone) {
       setError('Please fill in all fields first');
       return;
     }
@@ -157,6 +158,19 @@ const Register = () => {
                     value={formData.email}
                     onChange={handleChange}
                     className="input-field"
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <input
+                    type="tel"
+                    placeholder="Phone Number (e.g., +919876543210)"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="input-field"
+                    pattern="(\+91|91)\d{10}"
+                    title="Please enter a valid Indian phone number starting with +91 or 91 followed by 10 digits"
                     required
                   />
                 </div>

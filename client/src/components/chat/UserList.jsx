@@ -4,7 +4,7 @@ import axios from '../../utils/axios';
 import './UserList.css';
 
 const UserList = ({ onUserSelect, onClose }) => {
-  const [searchEmail, setSearchEmail] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [searchResult, setSearchResult] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -13,16 +13,16 @@ const UserList = ({ onUserSelect, onClose }) => {
 
   const searchUser = async (e) => {
     e.preventDefault();
-    if (!searchEmail) return;
+    if (!searchQuery) return;
 
     setLoading(true);
     setError('');
     setSearchResult(null);
 
     try {
-      const response = await axios.get(`/users/search?email=${searchEmail}`);
+      const response = await axios.get(`/users/search?query=${searchQuery}`);
       if (response.data._id === user.id) {
-        setError("This is your email address");
+        setError("This is your email address or phone number");
       } else {
         setSearchResult(response.data);
       }
@@ -58,10 +58,10 @@ const UserList = ({ onUserSelect, onClose }) => {
       <h2 className="user-list-title">New Chat</h2>
       <form onSubmit={searchUser} className="search-form">
         <input
-          type="email"
-          value={searchEmail}
-          onChange={(e) => setSearchEmail(e.target.value)}
-          placeholder="Enter email address"
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Enter email or phone number"
           className="search-input"
           required
         />
@@ -79,7 +79,9 @@ const UserList = ({ onUserSelect, onClose }) => {
             onClick={() => handleStartChat(searchResult)}
           >
             <div className="user-info">
+              <span className="user-name">{searchResult.name || 'No name'}</span>
               <span className="user-email">{searchResult.email}</span>
+              <span className="user-phone">{searchResult.phone}</span>
             </div>
           </div>
         </div>

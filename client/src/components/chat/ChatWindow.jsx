@@ -97,7 +97,11 @@ const ChatWindow = ({ selectedChat }) => {
       <div className="chat-header">
         <div className="chat-header-user">
           <Avatar user={otherUser} size={40} />
-          <span>{otherUser?.name || otherUser?.email}</span>
+          <div className="user-details">
+            <span className="user-name">{otherUser?.name || 'No name'}</span>
+            <span className="user-email">{otherUser?.email}</span>
+            <span className="user-phone">{otherUser?.phone}</span>
+          </div>
         </div>
       </div>
 
