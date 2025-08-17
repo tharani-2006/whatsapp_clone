@@ -35,14 +35,26 @@ const upload = multer({
 // Register
 router.post('/register', async (req, res) => {
   try {
-    const { email, password, name } = req.body;
+    const { email, password, name, phone } = req.body;
+
+    // Validate phone number
+    if (!phone || !/^(\+91|91)\d{10}$/.test(phone)) {
+      return res.status(400).json({ 
+        message: 'Please enter a valid Indian phone number starting with +91 or 91 followed by 10 digits' 
+      });
+    }
 
     // Check if user already exists
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ 
+      $or: [
+        { email },
+        { phone }
+      ]
+    });
 
     if (user) {
       return res.status(400).json({ 
-        message: 'User already exists with this email' 
+        message: 'User already exists with this email or phone number' 
       });
     }
 
@@ -50,7 +62,8 @@ router.post('/register', async (req, res) => {
     user = new User({
       email,
       password,
-      name
+      name,
+      phone
     });
 
     await user.save();
@@ -107,16 +120,19 @@ router.get('/users', auth, async (req, res) => {
   }
 });
 
-// Search for a user by email (excluding the logged-in user)
+// Search for a user by email or phone (excluding the logged-in user)
 router.get('/users/search', auth, async (req, res) => {
   try {
-    const { email } = req.query;
+    const { query } = req.query; // Can be email or phone
     const user = await User.findOne(
       { 
-        email: email.toLowerCase(),
+        $or: [
+          { email: query.toLowerCase() },
+          { phone: query }
+        ],
         _id: { $ne: req.user._id }
       },
-      'email'
+      'email name phone profilePic'
     );
     
     if (!user) {
