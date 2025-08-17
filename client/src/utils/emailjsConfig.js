@@ -2,7 +2,7 @@
 // Replace these values with your actual EmailJS credentials
 
 export const EMAILJS_CONFIG = {
-  SERVICE_ID: 'YOUR_SERVICE_ID', // Your EmailJS service ID
+  SERVICE_ID: 'service_n3833ou', // Your EmailJS service ID
   TEMPLATE_ID: 'YOUR_TEMPLATE_ID', // Your EmailJS template ID
   USER_ID: 'YOUR_USER_ID' // Your EmailJS user ID
 };
