@@ -58,10 +58,13 @@ router.post('/register', async (req, res) => {
       });
     }
 
+    // Hash password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     // Create new user
     user = new User({
       email,
-      password,
+      password: hashedPassword,
       name,
       phone
     });
