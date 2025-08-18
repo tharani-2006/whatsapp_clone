@@ -14,6 +14,10 @@ export const SocketProvider = ({ children }) => {
         auth: {
           token: localStorage.getItem('token'),
         },
+        transports: ['websocket'],
+        reconnection: true,
+        reconnectionAttempts: 10,
+        reconnectionDelay: 1000
       });
 
       setSocket(newSocket);

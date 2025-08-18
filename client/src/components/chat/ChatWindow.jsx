@@ -35,14 +35,15 @@ const ChatWindow = ({ selectedChat }) => {
 
   // Handle real-time messages
   useEffect(() => {
-    if (!socket || !selectedChat) return;
+    if (!socket || !selectedChat?._id) return;
 
-    // Join chat room
+    // Join chat room once per chat change
     socket.emit('join_chat', selectedChat._id);
 
     // Listen for new messages
     const handleNewMessage = (message) => {
-      setMessages(prev => [...prev, message]);
+      // Avoid duplicating the message we already appended locally
+      setMessages(prev => (prev.some(m => m._id === message._id) ? prev : [...prev, message]));
       scrollToBottom();
     };
 
@@ -51,7 +52,7 @@ const ChatWindow = ({ selectedChat }) => {
     return () => {
       socket.off('receive_message', handleNewMessage);
     };
-  }, [socket, selectedChat]);
+  }, [socket, selectedChat?._id]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -63,14 +64,9 @@ const ChatWindow = ({ selectedChat }) => {
         content: newMessage
       });
 
-      // Emit message through socket
-      socket.emit('new_message', {
-        ...response.data,
-        chatId: selectedChat._id
-      });
-
-      // Update local state
+      // Update local state and emit after set
       setMessages(prev => [...prev, response.data]);
+      socket.emit('new_message', { ...response.data, chatId: selectedChat._id });
       setNewMessage('');
       scrollToBottom();
     } catch (err) {

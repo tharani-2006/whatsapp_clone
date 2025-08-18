@@ -21,14 +21,20 @@ const DefaultAvatar = ({ size }) => (
 const Avatar = ({ user, size = 40 }) => {
   const [showDefault, setShowDefault] = useState(!user?.profilePic);
 
+  useEffect(() => {
+    setShowDefault(!user?.profilePic);
+  }, [user?.profilePic]);
+
   if (showDefault) {
     return <DefaultAvatar size={size} />;
   }
 
+  const src = `http://localhost:5000${user.profilePic}?t=${Date.now()}`;
+
   return (
     <div style={{ width: size, height: size }}>
       <img
-        src={`http://localhost:5000${user.profilePic}`}
+        src={src}
         alt={user.name || user.email}
         style={{
           width: '100%',
