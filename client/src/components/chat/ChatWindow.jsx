@@ -5,7 +5,7 @@ import axios from '../../utils/axios';
 import './ChatWindow.css';
 import Avatar from '../common/Avatar';
 
-const ChatWindow = ({ selectedChat }) => {
+const ChatWindow = ({ selectedChat, onBack }) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
@@ -92,12 +92,25 @@ const ChatWindow = ({ selectedChat }) => {
     <div className="chat-window">
       <div className="chat-header">
         <div className="chat-header-user">
+          <button
+            aria-label="Back"
+            onClick={() => onBack?.()}
+            className="new-chat-button"
+            style={{ display: 'none' }}
+          >
+            ←
+          </button>
           <Avatar user={otherUser} size={40} />
           <div className="user-details">
-            <span className="user-name">{otherUser?.name || 'No name'}</span>
-            <span className="user-email">{otherUser?.email}</span>
-            <span className="user-phone">{otherUser?.phone}</span>
+            <span className="user-name">{otherUser?.name || otherUser?.email}</span>
+            <span className="user-email">online</span>
           </div>
+        </div>
+        <div className="sidebar-actions">
+          <button className="new-chat-button" aria-label="Search">🔍</button>
+          <button className="new-chat-button" aria-label="Voice call" disabled>📞</button>
+          <button className="new-chat-button" aria-label="Video call" disabled>🎥</button>
+          <button className="new-chat-button" aria-label="More">⋮</button>
         </div>
       </div>
 

@@ -1,5 +1,24 @@
 .chat-layout {
-  display: flex;
+  display: grid;
+  grid-template-columns: 360px 1fr;
   height: 100vh;
-  background-color: #111b21;
+  background-color: var(--bg);
+}
+
+@media (max-width: 1024px) {
+  .chat-layout {
+    grid-template-columns: 320px 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .chat-layout {
+    grid-template-columns: 1fr;
+  }
+  .chat-window--hidden {
+    display: none;
+  }
+  .sidebar--hidden {
+    display: none;
+  }
 }

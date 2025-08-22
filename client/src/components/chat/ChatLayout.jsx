@@ -5,11 +5,16 @@ import './ChatLayout.css';
 
 const ChatLayout = () => {
   const [selectedChat, setSelectedChat] = useState(null);
+  const showSidebar = !selectedChat;
 
   return (
     <div className="chat-layout">
-      <Sidebar onChatSelect={setSelectedChat} selectedChat={selectedChat} />
-      <ChatWindow selectedChat={selectedChat} />
+      <div className={showSidebar ? '' : 'sidebar--hidden'}>
+        <Sidebar onChatSelect={setSelectedChat} selectedChat={selectedChat} />
+      </div>
+      <div className={!showSidebar ? '' : 'chat-window--hidden'}>
+        <ChatWindow selectedChat={selectedChat} onBack={() => setSelectedChat(null)} />
+      </div>
     </div>
   );
 };
