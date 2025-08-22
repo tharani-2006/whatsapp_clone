@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
+import { useCall } from '../../context/CallContext';
 import axios from '../../utils/axios';
 import './ChatWindow.css';
 import Avatar from '../common/Avatar';
@@ -11,6 +12,7 @@ const ChatWindow = ({ selectedChat, onBack }) => {
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const socket = useSocket();
+  const { startCall } = useCall();
   const messagesEndRef = useRef(null);
 
   // Fetch initial messages
@@ -37,7 +39,7 @@ const ChatWindow = ({ selectedChat, onBack }) => {
   useEffect(() => {
     if (!socket || !selectedChat?._id) return;
 
-    // Join chat room once per chat change
+    // Join chat room
     socket.emit('join_chat', selectedChat._id);
 
     // Listen for new messages
@@ -78,6 +80,20 @@ const ChatWindow = ({ selectedChat, onBack }) => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleVoiceCall = () => {
+    const otherUser = selectedChat.participants.find(p => p._id !== user?.id);
+    if (otherUser) {
+      startCall(otherUser._id, 'voice');
+    }
+  };
+
+  const handleVideoCall = () => {
+    const otherUser = selectedChat.participants.find(p => p._id !== user?.id);
+    if (otherUser) {
+      startCall(otherUser._id, 'video');
+    }
+  };
+
   if (!selectedChat || !selectedChat.participants) {
     return (
       <div className="chat-window empty-chat">
@@ -108,8 +124,22 @@ const ChatWindow = ({ selectedChat, onBack }) => {
         </div>
         <div className="sidebar-actions">
           <button className="new-chat-button" aria-label="Search">🔍</button>
-          <button className="new-chat-button" aria-label="Voice call" disabled>📞</button>
-          <button className="new-chat-button" aria-label="Video call" disabled>🎥</button>
+          <button 
+            className="new-chat-button" 
+            aria-label="Voice call" 
+            onClick={handleVoiceCall}
+            title="Voice call"
+          >
+            📞
+          </button>
+          <button 
+            className="new-chat-button" 
+            aria-label="Video call" 
+            onClick={handleVideoCall}
+            title="Video call"
+          >
+            🎥
+          </button>
           <button className="new-chat-button" aria-label="More">⋮</button>
         </div>
       </div>

@@ -20,6 +20,9 @@ export const SocketProvider = ({ children }) => {
         reconnectionDelay: 1000
       });
 
+      // Connect user for calling
+      newSocket.emit('user_connected', user.id);
+
       setSocket(newSocket);
 
       return () => {

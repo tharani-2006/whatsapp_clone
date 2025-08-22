@@ -1,0 +1,152 @@
+.call-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.call-content {
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.call-header h3 {
+  color: var(--text);
+  margin: 0 0 8px 0;
+  font-size: 1.5rem;
+}
+
+.call-header p {
+  color: var(--muted);
+  margin: 0 0 24px 0;
+  font-size: 1rem;
+}
+
+.call-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.call-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 100px;
+}
+
+.call-btn.accept {
+  background: var(--accent);
+  color: white;
+}
+
+.call-btn.accept:hover {
+  background: #008f6f;
+}
+
+.call-btn.reject {
+  background: #dc3545;
+  color: white;
+}
+
+.call-btn.reject:hover {
+  background: #c82333;
+}
+
+.call-btn.end {
+  background: #dc3545;
+  color: white;
+}
+
+.call-btn.end:hover {
+  background: #c82333;
+}
+
+.video-container {
+  position: relative;
+  margin: 20px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+}
+
+.remote-video {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+}
+
+.local-video {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 120px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid var(--accent);
+}
+
+.call-controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.control-btn {
+  padding: 12px;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--hover);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.control-btn:hover {
+  background: var(--divider);
+}
+
+.control-btn.end {
+  background: #dc3545;
+  color: white;
+}
+
+.control-btn.end:hover {
+  background: #c82333;
+}
+
+@media (max-width: 768px) {
+  .call-content {
+    margin: 20px;
+    padding: 20px;
+  }
+  
+  .call-actions {
+    flex-direction: column;
+  }
+  
+  .call-controls {
+    flex-wrap: wrap;
+  }
+}
