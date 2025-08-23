@@ -5,6 +5,7 @@ const User = require('../models/User');
 const auth = require('../middleware/auth');
 const multer = require('multer');
 const path = require('path');
+const { getIO } = require('../utils/io');
 
 // Multer configuration for profile picture upload
 const storage = multer.diskStorage({
@@ -103,8 +104,21 @@ router.post('/login', async (req, res) => {
 
     res.json({
       token,
-      user: { id: user._id, email: user.email }
+      user: { id: user._id, email: user.email, name: user.name, phone: user.phone, profilePic: user.profilePic }
     });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Get user by phone number (for calling)
+router.get('/user/phone/:phone', auth, async (req, res) => {
+  try {
+    const user = await User.findOne({ phone: req.params.phone }).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -179,7 +193,12 @@ router.post('/user/profile-picture', auth, upload.single('profilePic'), async (r
     ).select('-password');
 
     // Broadcast profile update to all users
-    io.emit('profile_updated');
+    try {
+      const io = getIO();
+      io.emit('profile_updated');
+    } catch (_) {
+      // ignore if io is not initialized
+    }
     
     res.json(user);
   } catch (err) {
