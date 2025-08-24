@@ -22,3 +22,37 @@
     display: none;
   }
 }
+
+.chat-layout {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  height: 100vh;
+  background-color: var(--bg);
+}
+
+.welcome-screen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #222e35;
+  color: #e9edef;
+  text-align: center;
+  border-bottom: 6px solid #00a884;
+}
+
+.welcome-content h1 {
+  font-size: 2rem;
+  font-weight: 300;
+  color: #e9edef;
+}
+
+.welcome-content p {
+  font-size: 1rem;
+  color: #8696a0;
+  margin-top: 1rem;
+}
+
+.welcome-content .footer-note {
+  margin-top: 3rem;
+  font-size: 0.875rem;
+}

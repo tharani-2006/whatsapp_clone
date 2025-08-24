@@ -1,12 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
+import { IoChatboxEllipsesOutline, IoLogOutOutline } from 'react-icons/io5';
+import { BsCameraFill } from 'react-icons/bs';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
-import UserList from './UserList';
 import axios from '../../utils/axios';
-import './Sidebar.css';
+import UserList from './UserList';
 import Profile from '../Profile';
 import Avatar from '../common/Avatar';
 import UserProfile from './UserProfile';
+import './Sidebar.css';
 
 const Sidebar = ({ onChatSelect, selectedChat }) => {
   const [showUserList, setShowUserList] = useState(false);
@@ -17,6 +19,7 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
   const socket = useSocket();
   const fileInputRef = useRef(null);
 
+  // Fetch chats from backend
   const fetchChats = async () => {
     try {
       const response = await axios.get('/chats');
@@ -30,6 +33,7 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
     fetchChats();
   }, []);
 
+  // Refresh chats when profile updated via socket
   useEffect(() => {
     if (!socket) return;
     const onProfileUpdated = () => {
@@ -41,18 +45,15 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
     };
   }, [socket]);
 
-  // Updated handler for when a new chat is created
+  // Handle creating new chat
   const handleNewChat = async (chat) => {
-    // Update chats list
     await fetchChats();
-    // Select the new chat
     onChatSelect(chat);
-    // Close the user list modal
     setShowUserList(false);
   };
 
   const handleAvatarClick = (e, user) => {
-    e.stopPropagation(); // Prevent chat selection
+    e.stopPropagation();
     setSelectedUser(user);
   };
 
@@ -69,16 +70,13 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
       const response = await axios.post('/user/profile-picture', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      // Update current user in context
       if (user) {
         login({ ...user, profilePic: response.data.profilePic }, localStorage.getItem('token'));
       }
-      // Chats will refresh via socket 'profile_updated'
+      // socket will auto-refresh chats
     } catch (err) {
       console.error('Error uploading profile picture:', err);
-      // no UI toast system; silently fail in console
     } finally {
-      // reset input so same file can be re-selected
       e.target.value = '';
     }
   };
@@ -86,32 +84,43 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
   return (
     <div className="sidebar">
       <div className="sidebar-header">
-        <div className="user-profile" onClick={() => setShowProfile(true)} title="View profile">
+        {/* User avatar / profile */}
+        <div 
+          className="user-profile" 
+          onClick={() => setShowProfile(true)} 
+          title="View profile"
+        >
           <Avatar user={user} size={40} />
         </div>
+
+        {/* Sidebar action buttons */}
         <div className="sidebar-actions">
-          <button 
+          <button
             className="new-chat-button"
             onClick={() => setShowUserList(true)}
-            >
-            💬
+            title="New chat"
+          >
+            <IoChatboxEllipsesOutline />
           </button>
+
           {!(user && user.profilePic) && (
             <button
               className="new-chat-button"
               onClick={handleUploadClick}
               title="Upload profile photo"
             >
-              📷
+              <BsCameraFill />
             </button>
           )}
+
           <button
             className="new-chat-button"
             onClick={() => window.location.href = '/login'}
             title="Logout"
           >
-            ⎋
+            <IoLogOutOutline />
           </button>
+
           <input
             type="file"
             accept="image/*"
@@ -122,6 +131,7 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
         </div>
       </div>
 
+      {/* Chat list */}
       <div className="chat-list">
         {chats.map(chat => {
           const otherUser = chat.participants.find(p => p._id !== user?.id);
@@ -131,7 +141,7 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
               className={`chat-item ${selectedChat?._id === chat._id ? 'selected' : ''}`}
               onClick={() => onChatSelect(chat)}
             >
-              <div 
+              <div
                 className="chat-avatar"
                 onClick={(e) => handleAvatarClick(e, otherUser)}
               >
@@ -150,7 +160,7 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
         })}
       </div>
 
-      {/* Add UserProfile modal */}
+      {/* User profile modal */}
       {selectedUser && (
         <UserProfile 
           user={selectedUser} 
@@ -158,6 +168,7 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
         />
       )}
 
+      {/* User list modal */}
       {showUserList && (
         <UserList 
           onUserSelect={handleNewChat}
@@ -165,6 +176,7 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
         />
       )}
 
+      {/* Current user's profile modal */}
       {showProfile && (
         <Profile onClose={() => setShowProfile(false)} />
       )}

@@ -111,26 +111,25 @@ const ChatWindow = ({ selectedChat, onBack }) => {
           <button
             aria-label="Back"
             onClick={() => onBack?.()}
-            className="new-chat-button"
-            style={{ display: 'none' }}
+            className="new-chat-button back-button"
           >
             ←
           </button>
           <Avatar user={otherUser} size={40} />
           <div className="user-details">
             <span className="user-name">{otherUser?.name || otherUser?.email}</span>
-            <span className="user-email">online</span>
+            <span className="user-status">online</span>
           </div>
         </div>
         <div className="sidebar-actions">
-          <button className="new-chat-button" aria-label="Search">🔍</button>
+          <button className="new-chat-button" aria-label="Search">⌕</button>
           <button 
             className="new-chat-button" 
             aria-label="Voice call" 
             onClick={handleVoiceCall}
             title="Voice call"
           >
-            📞
+            ☎
           </button>
           <button 
             className="new-chat-button" 
@@ -138,7 +137,7 @@ const ChatWindow = ({ selectedChat, onBack }) => {
             onClick={handleVideoCall}
             title="Video call"
           >
-            🎥
+            ⚈
           </button>
           <button className="new-chat-button" aria-label="More">⋮</button>
         </div>
@@ -171,8 +170,9 @@ const ChatWindow = ({ selectedChat, onBack }) => {
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Type a message"
+          className="message-input-field"
         />
-        <button type="submit">Send</button>
+        <button type="submit" className="send-button">→</button>
       </form>
     </div>
   );
