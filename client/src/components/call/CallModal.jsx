@@ -8,6 +8,7 @@ const CallModal = () => {
     callState,
     callType,
     remoteUser,
+    remoteUserDetails,
     localStream,
     remoteStream,
     acceptCall,
@@ -40,7 +41,15 @@ const CallModal = () => {
       <div className="call-content">
         <div className="call-header">
           <h3>Incoming {callType === 'video' ? 'Video' : 'Voice'} Call</h3>
-          <p>From: {remoteUser}</p>
+          {remoteUserDetails ? (
+            <>
+              <p><strong>Name:</strong> {remoteUserDetails.name || 'Unknown'}</p>
+              <p><strong>Phone:</strong> {remoteUserDetails.phone || 'Unknown'}</p>
+              <p><strong>Email:</strong> {remoteUserDetails.email || 'Unknown'}</p>
+            </>
+          ) : (
+            <p>From: {remoteUser}</p>
+          )}
         </div>
         <div className="call-actions">
           <button className="call-btn accept" onClick={acceptCall}>
@@ -59,7 +68,15 @@ const CallModal = () => {
       <div className="call-content">
         <div className="call-header">
           <h3>{callType === 'video' ? 'Video' : 'Voice'} Call</h3>
-          <p>With: {remoteUser}</p>
+          {remoteUserDetails ? (
+            <>
+              <p><strong>Name:</strong> {remoteUserDetails.name || 'Unknown'}</p>
+              <p><strong>Phone:</strong> {remoteUserDetails.phone || 'Unknown'}</p>
+              <p><strong>Email:</strong> {remoteUserDetails.email || 'Unknown'}</p>
+            </>
+          ) : (
+            <p>With: {remoteUser}</p>
+          )}
         </div>
         
         {callType === 'video' && (
@@ -102,7 +119,15 @@ const CallModal = () => {
       <div className="call-content">
         <div className="call-header">
           <h3>Calling...</h3>
-          <p>To: {remoteUser}</p>
+          {remoteUserDetails ? (
+            <>
+              <p><strong>Name:</strong> {remoteUserDetails.name || 'Unknown'}</p>
+              <p><strong>Phone:</strong> {remoteUserDetails.phone || 'Unknown'}</p>
+              <p><strong>Email:</strong> {remoteUserDetails.email || 'Unknown'}</p>
+            </>
+          ) : (
+            <p>To: {remoteUser}</p>
+          )}
         </div>
         <div className="call-actions">
           <button className="call-btn end" onClick={endCall}>
