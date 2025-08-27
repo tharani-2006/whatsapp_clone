@@ -36,6 +36,7 @@ io.on('connection', (socket) => {
   socket.on('user_connected', (userId) => {
     onlineUsers.set(userId, socket.id);
     console.log('User mapped:', userId, socket.id);
+    console.log('Online Users:', onlineUsers);
   });
 
   socket.on('join_chat', (chatId) => {
@@ -46,6 +47,7 @@ io.on('connection', (socket) => {
   // Handle call signaling
   socket.on('call_user', async (data) => {
     const { from, to, callType } = data;
+    console.log('Calling user:', to);
     const recipientSocket = onlineUsers.get(to);
     
     if (recipientSocket) {
@@ -75,6 +77,8 @@ io.on('connection', (socket) => {
         console.error('Error saving call history:', error);
       }
 
+    } else {
+      console.log('Recipient not online:', to);
     }
   });
 
@@ -93,9 +97,8 @@ io.on('connection', (socket) => {
 
     if (recipientSocket) {
       io.to(recipientSocket).emit('call_rejected', { callId });
-            activeCalls.delete(callId);
-              }
-            });
+    }
+  });
 
   socket.on('call_ended', async (data) => {
     const { callId, to } = data;
@@ -103,7 +106,6 @@ io.on('connection', (socket) => {
 
     if (recipientSocket) {
       io.to(recipientSocket).emit('call_ended', { callId });
-      activeCalls.delete(callId);
           }
 
     // Update call history in database

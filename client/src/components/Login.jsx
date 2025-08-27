@@ -1,8 +1,8 @@
-import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import axios from '../utils/axios';
 import './Login.css';
+import { useState } from 'react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -14,7 +14,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/login', {
+      const response = await axios.post('/login', {
         email,
         password,
       });
@@ -83,4 +83,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Login; 

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-
-import axios from '../../utils/axios'; // Import axios
+import axios from './utils/axios';
 
 const Calls = () => {
   const [callHistory, setCallHistory] = useState([]);
@@ -10,8 +9,7 @@ const Calls = () => {
   useEffect(() => {
     const fetchCallHistory = async () => {
       try {
-
-        const response = await axios.get('/api/callHistory'); // Fetch call history
+        const response = await axios.get('/callHistory'); // Fetch call history
         setCallHistory(response.data);
       } catch (error) {
         setError(error);
@@ -41,18 +39,14 @@ const Calls = () => {
             <th>Contact</th>
             <th>Type</th>
             <th>Duration</th>
-            <th>Date</th>
           </tr>
         </thead>
         <tbody>
           {callHistory.map(call => (
             <tr key={call._id}>
-
               <td>{call.caller.name}</td>
               <td>{call.type}</td>
               <td>{call.duration}</td>
-
-              <td>{call.startTime}</td>
             </tr>
           ))}
         </tbody>

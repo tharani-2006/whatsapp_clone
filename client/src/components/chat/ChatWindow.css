@@ -1,3 +1,8 @@
+
+
+
+
+
 .chat-window {
   flex: 1;
   display: flex;
@@ -60,6 +65,11 @@
 .sidebar-actions {
   display: flex;
   gap: 8px;
+  position: sticky;
+  top: 0;
+  background-color: var(--panel);
+  padding: 12px 16px;
+  z-index: 1;
 }
 
 .new-chat-button {
@@ -135,6 +145,8 @@
   gap: 12px;
   border-top: 1px solid var(--divider);
   align-items: center;
+  position: sticky;
+  bottom: 0;
 }
 
 .message-input-field {
@@ -147,3 +159,6 @@
   font-size: 15px;
   outline: none;
 }
+
+
+
