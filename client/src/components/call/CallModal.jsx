@@ -21,8 +21,8 @@ const CallModal = () => {
   const { user } = useAuth();
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
-  const [startTime, setStartTime] = useState(null);
   const [muted, setMuted] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState('00:00');
 
   useEffect(() => {
     if (localStream && localVideoRef.current) {
@@ -37,21 +37,23 @@ const CallModal = () => {
   }, [remoteStream]);
 
   useEffect(() => {
+    let intervalId;
+
     if (callState === 'connected') {
-      setStartTime(new Date());
-    } else {
-      setStartTime(null);
-    }
-  }, [callState]);
-
-  const formatTime = (date) => {
-    if (!date) return '00:00';
-    const diff = new Date().getTime() - date.getTime();
-    const minutes = Math.floor((diff / 1000 / 60) % 60);
+      const startTime = new Date().getTime();
+      intervalId = setInterval(() => {
+        const now = new Date().getTime();
+        const diff = now - startTime;
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
     const seconds = Math.floor((diff / 1000) % 60);
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  };
+        setElapsedTime(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+      }, 1000);
+    } else {
+      setElapsedTime('00:00');
+    }
 
+    return () => clearInterval(intervalId);
+  }, [callState]);
   const handleMuteToggle = () => {
     toggleMute();
     setMuted(!muted);
@@ -60,7 +62,14 @@ const CallModal = () => {
   if (callState === 'idle') return null;
 
   const renderIncomingCall = () => (
-    <div className="call-modal incoming" style={{ width: '400px', padding: '20px' }}>
+    <div className="call-modal incoming" style={{
+      width: '400px',
+      padding: '20px',
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)'
+    }}>
       <div className="call-content">
         <div className="call-header">
           <h3 style={{ fontSize: '24px' }}>Incoming {callType === 'video' ? 'Video' : 'Voice'} Call</h3>
@@ -87,7 +96,14 @@ const CallModal = () => {
   );
 
   const renderActiveCall = () => (
-    <div className="call-modal active" style={{ width: '600px', padding: '30px' }}>
+    <div className="call-modal active" style={{
+      width: '600px',
+      padding: '30px',
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)'
+    }}>
       <div className="call-content">
         <div className="call-header">
           <h3 style={{ fontSize: '28px' }}>{callType === 'video' ? 'Video' : 'Voice'} Call</h3>
@@ -99,7 +115,7 @@ const CallModal = () => {
           ) : (
             <p style={{ fontSize: '18px' }}>With: {remoteUser}</p>
           )}
-          {startTime && <p style={{ fontSize: '18px' }}><strong>Time:</strong> {formatTime(startTime)}</p>}
+          <p style={{ fontSize: '18px' }}><strong>Time:</strong> {elapsedTime}</p>
         </div>
 
         {callType === 'video' && (
@@ -140,7 +156,14 @@ const CallModal = () => {
   );
 
   const renderCalling = () => (
-    <div className="call-modal calling" style={{ width: '400px', padding: '20px' }}>
+    <div className="call-modal calling" style={{
+      width: '400px',
+      padding: '20px',
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)'
+    }}>
       <div className="call-content">
         <div className="call-header">
           <h3 style={{ fontSize: '24px' }}>Calling...</h3>

@@ -3,6 +3,7 @@ const router = require('express').Router();
 const Chat = require('../models/Chat');
 const Message = require('../models/Message');
 const auth = require('../middleware/auth');
+const CallHistory = require('../models/CallHistory'); // Add this line
 
 // Get all chats for current user
 router.get('/chats', auth, async (req, res) => {
@@ -26,6 +27,25 @@ router.get('/chats', auth, async (req, res) => {
   }
 });
 
+// Get call history for current user
+router.get('/callHistory', auth, async (req, res) => {
+  try {
+    const callHistory = await CallHistory.find({
+      $or: [
+        { caller: req.user._id },
+        { receiver: req.user._id }
+      ]
+    })
+    .populate('caller', 'email name profilePic')
+    .populate('receiver', 'email name profilePic')
+    .sort('-startTime');
+
+    res.json(callHistory);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // Get single chat with populated data
 router.get('/chat/:id', auth, async (req, res) => {
   try {
@@ -38,7 +58,6 @@ router.get('/chat/:id', auth, async (req, res) => {
           select: 'email name profilePic'
         }
       });
-    
     if (!chat) {
       return res.status(404).json({ message: 'Chat not found' });
     }
@@ -53,7 +72,7 @@ router.get('/chat/:id', auth, async (req, res) => {
 router.post('/chat', auth, async (req, res) => {
   try {
     const { userId } = req.body;
-    
+
     // Check for existing chat
     let chat = await Chat.findOne({
       participants: {
@@ -97,7 +116,6 @@ router.post('/message', auth, async (req, res) => {
       lastMessage: message._id,
       updatedAt: new Date()
     });
-
     res.status(201).json(message);
   } catch (err) {
     res.status(500).json({ message: err.message });

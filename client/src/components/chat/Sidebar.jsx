@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { IoChatboxEllipsesOutline, IoLogOutOutline } from 'react-icons/io5';
 import { BsCameraFill } from 'react-icons/bs';
 import { useAuth } from '../../context/AuthContext';
@@ -45,6 +45,30 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
     };
   }, [socket]);
 
+  // Listen for new messages
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleNewMessage = (message) => {
+      // Update the chat list with the new message
+      setChats(prevChats => {
+        const updatedChats = prevChats.map(chat => {
+          if (chat._id === message.chat) {
+            return { ...chat, lastMessage: message };
+          }
+          return chat;
+        });
+        return updatedChats;
+      });
+    };
+
+    socket.on('receive_message', handleNewMessage); // Changed event name here
+
+    return () => {
+      socket.off('receive_message', handleNewMessage); // Changed event name here
+    };
+  }, [socket]);
+
   // Handle creating new chat
   const handleNewChat = async (chat) => {
     await fetchChats();
@@ -81,13 +105,15 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
     }
   };
 
+  const onChatSelectMemoized = useCallback(onChatSelect, []);
+
   return (
     <div className="sidebar">
       <div className="sidebar-header">
         {/* User avatar / profile */}
-        <div 
-          className="user-profile" 
-          onClick={() => setShowProfile(true)} 
+        <div
+          className="user-profile"
+          onClick={() => setShowProfile(true)}
           title="View profile"
         >
           <Avatar user={user} size={40} />
@@ -139,7 +165,7 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
             <div
               key={chat._id}
               className={`chat-item ${selectedChat?._id === chat._id ? 'selected' : ''}`}
-              onClick={() => onChatSelect(chat)}
+              onClick={() => onChatSelectMemoized(chat)}
             >
               <div
                 className="chat-avatar"
@@ -162,17 +188,17 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
 
       {/* User profile modal */}
       {selectedUser && (
-        <UserProfile 
-          user={selectedUser} 
-          onClose={() => setSelectedUser(null)} 
+        <UserProfile
+          user={selectedUser}
+          onClose={() => setSelectedUser(null)}
         />
       )}
 
       {/* User list modal */}
       {showUserList && (
-        <UserList 
+        <UserList
           onUserSelect={handleNewChat}
-          onClose={() => setShowUserList(false)} 
+          onClose={() => setShowUserList(false)}
         />
       )}
 
@@ -185,3 +211,4 @@ const Sidebar = ({ onChatSelect, selectedChat }) => {
 };
 
 export default Sidebar;
+

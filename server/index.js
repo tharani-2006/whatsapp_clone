@@ -11,6 +11,7 @@ const authRoutes = require('./routes/auth');
 const chatRoutes = require('./routes/chat');
 const Chat = require('./models/Chat');
 const Message = require('./models/Message');
+const CallHistory = require('./models/CallHistory'); // Add this line
 
 
 const app = express();
@@ -43,7 +44,7 @@ io.on('connection', (socket) => {
   });
 
   // Handle call signaling
-  socket.on('call_user', (data) => {
+  socket.on('call_user', async (data) => {
     const { from, to, callType } = data;
     const recipientSocket = onlineUsers.get(to);
     
@@ -60,13 +61,27 @@ io.on('connection', (socket) => {
         callType,
         callId
       });
+
+      // Save call to database
+      try {
+        const callHistory = new CallHistory({
+          caller: from,
+          receiver: to,
+          startTime: new Date(),
+          type: 'outgoing'
+        });
+        await callHistory.save();
+      } catch (error) {
+        console.error('Error saving call history:', error);
+      }
+
     }
   });
 
   socket.on('call_accepted', (data) => {
     const { callId, to } = data;
     const recipientSocket = onlineUsers.get(to);
-    
+
     if (recipientSocket) {
       io.to(recipientSocket).emit('call_accepted', { callId });
     }
@@ -75,20 +90,32 @@ io.on('connection', (socket) => {
   socket.on('call_rejected', (data) => {
     const { callId, to } = data;
     const recipientSocket = onlineUsers.get(to);
-    
+
     if (recipientSocket) {
       io.to(recipientSocket).emit('call_rejected', { callId });
-      activeCalls.delete(callId);
-    }
-  });
+            activeCalls.delete(callId);
+              }
+            });
 
-  socket.on('call_ended', (data) => {
+  socket.on('call_ended', async (data) => {
     const { callId, to } = data;
     const recipientSocket = onlineUsers.get(to);
-    
+
     if (recipientSocket) {
       io.to(recipientSocket).emit('call_ended', { callId });
       activeCalls.delete(callId);
+          }
+
+    // Update call history in database
+    try {
+      const call = await CallHistory.findOne({ caller: data.from, receiver: data.to, type: 'outgoing', endTime: null }).sort({ startTime: -1 });
+      if (call) {
+        call.endTime = new Date();
+        call.duration = (call.endTime - call.startTime) / 1000; // Duration in seconds
+        await call.save();
+      }
+    } catch (error) {
+      console.error('Error updating call history:', error);
     }
   });
 
@@ -96,16 +123,16 @@ io.on('connection', (socket) => {
   socket.on('offer', (data) => {
     const { to, offer } = data;
     const recipientSocket = onlineUsers.get(to);
-    
+
     if (recipientSocket) {
       io.to(recipientSocket).emit('offer', { from: socket.id, offer });
     }
-  });
+});
 
   socket.on('answer', (data) => {
     const { to, answer } = data;
     const recipientSocket = onlineUsers.get(to);
-    
+
     if (recipientSocket) {
       io.to(recipientSocket).emit('answer', { from: socket.id, answer });
     }
@@ -114,7 +141,7 @@ io.on('connection', (socket) => {
   socket.on('ice_candidate', (data) => {
     const { to, candidate } = data;
     const recipientSocket = onlineUsers.get(to);
-    
+
     if (recipientSocket) {
       io.to(recipientSocket).emit('ice_candidate', { from: socket.id, candidate });
     }
@@ -186,3 +213,4 @@ mongoose.connect(process.env.MONGO_URI, {
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => console.log(`Running at http://localhost:${PORT}`));
+

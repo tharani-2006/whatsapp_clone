@@ -18,13 +18,14 @@ const App = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route 
-                path="/home" 
+                path="/home/*" 
                 element={
                   <PrivateRoute>
                     <Home />
                   </PrivateRoute>
                 } 
               />
+              <Route path="/home" element={<Navigate to="/home/chats" />} />
               <Route path="/" element={<Navigate to="/login" />} />
             </Routes>
             <CallModal />
