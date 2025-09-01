@@ -1,30 +1,28 @@
-
-
-
-
-
 .chat-window {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: var(--bg);
+  background-color: var(--whatsapp-chat-bg);
   height: 100%;
+  overflow: hidden;
 }
 
 .empty-chat {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--muted);
+  color: var(--whatsapp-text-secondary);
+  height: 100%;
 }
 
 .chat-header {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--divider);
-  background-color: var(--panel);
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--whatsapp-border);
+  background-color: var(--whatsapp-sidebar-bg);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  min-height: 60px;
 }
 
 .chat-header-user {
@@ -51,50 +49,51 @@
 }
 
 .user-name {
-  font-weight: bold;
+  font-weight: 500;
   font-size: 16px;
-  color: var(--text-primary);
+  color: var(--whatsapp-text-primary);
 }
 
 .user-status {
-  font-size: 12px;
-  color: var(--text-secondary);
+  font-size: 13px;
+  color: var(--whatsapp-text-secondary);
   margin-top: 2px;
 }
 
 .sidebar-actions {
   display: flex;
   gap: 8px;
-  position: sticky;
-  top: 0;
-  background-color: var(--panel);
-  padding: 12px 16px;
-  z-index: 1;
+  align-items: center;
 }
 
 .new-chat-button {
   background: none;
   border: none;
-  color: var(--icon-color);
+  color: var(--whatsapp-text-secondary);
   font-size: 20px;
   cursor: pointer;
   padding: 8px;
   border-radius: 50%;
   transition: background-color 0.2s;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .new-chat-button:hover {
-  background-color: var(--hover-bg);
+  background-color: var(--whatsapp-hover);
 }
 
 .messages-container {
   flex: 1;
   padding: 20px;
-  overflow-y: scroll;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: #0b141a url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%231a242a" fill-opacity="0.6" fill-rule="evenodd"%3E%3Cpath d="M0 55h5v5H0zM55 0h5v5h-5z"/%3E%3C/g%3E%3C/svg%3E') repeat;
+  background: #efeae2 url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23d9d9d9" fill-opacity="0.4" fill-rule="evenodd"%3E%3Cpath d="M0 55h5v5H0zM55 0h5v5h-5z"/%3E%3C/g%3E%3C/svg%3E') repeat;
   height: 100%;
   justify-content: flex-start;
 }
@@ -103,8 +102,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  color: var(--text-secondary);
+  color: var(--whatsapp-text-secondary);
   font-size: 14px;
+  height: 100%;
 }
 
 .message {
@@ -117,36 +117,36 @@
 
 .message.sent {
   align-self: flex-end;
-  background-color: var(--bubble-in);
-  color: #d9fdd3;
+  background-color: #d9fdd3;
+  color: #111b21;
 }
 
 .message.received {
   align-self: flex-start;
-  background-color: var(--bubble-out);
-  color: var(--text);
+  background-color: white;
+  color: #111b21;
 }
 
 .message-content {
   margin-bottom: 4px;
   word-wrap: break-word;
+  line-height: 1.4;
 }
 
 .message-time {
-  font-size: 0.75em;
-  color: var(--muted);
+  font-size: 11px;
+  color: #667781;
   text-align: right;
+  margin-top: 4px;
 }
 
 .message-input {
   display: flex;
-  padding: 12px 16px;
-  background-color: var(--panel);
+  padding: 16px 20px;
+  background-color: var(--whatsapp-sidebar-bg);
   gap: 12px;
-  border-top: 1px solid var(--divider);
+  border-top: 1px solid var(--whatsapp-border);
   align-items: center;
-  position: sticky;
-  bottom: 0;
 }
 
 .message-input-field {
@@ -154,11 +154,46 @@
   padding: 12px 16px;
   border: none;
   border-radius: 20px;
-  background-color: var(--tertiary);
-  color: var(--text-primary);
+  background-color: #f0f2f5;
+  color: var(--whatsapp-text-primary);
   font-size: 15px;
   outline: none;
+  resize: none;
+  max-height: 100px;
 }
 
+.message-input-field:focus {
+  background-color: white;
+  box-shadow: 0 0 0 2px var(--whatsapp-green);
+}
 
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .chat-header {
+    padding: 12px 16px;
+    min-height: 56px;
+  }
+
+  .messages-container {
+    padding: 16px;
+  }
+
+  .message-input {
+    padding: 12px 16px;
+  }
+
+  .user-name {
+    font-size: 15px;
+  }
+
+  .user-status {
+    font-size: 12px;
+  }
+
+  .new-chat-button {
+    width: 36px;
+    height: 36px;
+    font-size: 18px;
+  }
+}
 

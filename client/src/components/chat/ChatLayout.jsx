@@ -25,7 +25,7 @@ const ChatLayout = () => {
 
   if (isMobileView) {
     return (
-      <div className="chat-layout">
+      <div className="chat-layout-mobile">
         {selectedChat ? (
           <ChatWindow
             key={selectedChat._id}
@@ -40,23 +40,29 @@ const ChatLayout = () => {
   }
 
   return (
-    <div className="chat-layout">
-      <Sidebar onChatSelect={handleSelectChat} selectedChat={selectedChat} />
-      {selectedChat ? (
-        <ChatWindow
-          key={selectedChat._id}
-          selectedChat={selectedChat}
-          onBack={handleBack}
-        />
-      ) : (
-        <div className="welcome-screen">
-          <div className="welcome-content">
-            <h1>WhatsApp Clone</h1>
-            <p>Select a chat to start messaging.</p>
-            <p className="footer-note">End-to-end encrypted (not really)</p>
+    <div className="chat-layout-desktop">
+      <div className="chat-sidebar-container">
+        <Sidebar onChatSelect={handleSelectChat} selectedChat={selectedChat} />
+      </div>
+      <div className="chat-main-container">
+        {selectedChat ? (
+          <ChatWindow
+            key={selectedChat._id}
+            selectedChat={selectedChat}
+            onBack={handleBack}
+          />
+        ) : (
+          <div className="welcome-screen">
+            <div className="welcome-content">
+              <div className="welcome-icon">💬</div>
+              <h1>WhatsApp Web</h1>
+              <p>Send and receive messages without keeping your phone online.</p>
+              <p>Use WhatsApp on up to 4 linked devices and 1 phone at the same time.</p>
+              <p className="footer-note">🔒 Your personal messages are end-to-end encrypted</p>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

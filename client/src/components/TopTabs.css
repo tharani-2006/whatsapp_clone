@@ -1,0 +1,92 @@
+.top-tabs-container {
+  background-color: var(--whatsapp-header-bg);
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 4px var(--whatsapp-shadow);
+}
+
+.whatsapp-header {
+  background-color: var(--whatsapp-header-bg);
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.whatsapp-header h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+  color: white;
+}
+
+.tab-bar {
+  display: flex;
+  background-color: var(--whatsapp-header-bg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tab-button {
+  color: rgba(255, 255, 255, 0.8);
+  padding: 12px 20px;
+  text-decoration: none;
+  flex: 1;
+  text-align: center;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.tab-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.tab-button.active {
+  border-bottom: 3px solid var(--whatsapp-light-green);
+  color: white;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.tab-icon {
+  font-size: 18px;
+  margin-bottom: 2px;
+}
+
+.tab-text {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 768px) {
+  .whatsapp-header {
+    padding: 12px 16px;
+  }
+  
+  .whatsapp-header h1 {
+    font-size: 18px;
+  }
+  
+  .tab-button {
+    padding: 10px 16px;
+    font-size: 12px;
+  }
+  
+  .tab-icon {
+    font-size: 16px;
+  }
+  
+  .tab-text {
+    font-size: 10px;
+  }
+}

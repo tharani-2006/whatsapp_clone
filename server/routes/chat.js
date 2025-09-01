@@ -56,17 +56,26 @@ router.post('/status', auth, upload.single('image'), async (req, res) => {
       imageUrl = `/uploads/statuses/${req.file.filename}`;
     }
 
+    // Validate that either content or image is provided
+    if (!content && !imageUrl) {
+      return res.status(400).json({ message: 'Either content or image is required' });
+    }
+
     const status = new Status({
       userId: req.user._id,
-      content,
+      content: content || '',
       imageUrl
     });
 
     await status.save();
+
+    // Populate user info before sending response
+    await status.populate('userId', 'name email profilePic');
+
     res.status(201).json(status);
   } catch (err) {
     console.error('Error creating status:', err);
-    res.status(500).json({ message: 'Failed to create status' });
+    res.status(500).json({ message: 'Failed to create status', error: err.message });
   }
 });
 

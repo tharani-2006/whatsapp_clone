@@ -1,0 +1,242 @@
+.calls-container {
+  height: 100%;
+  background-color: var(--whatsapp-bg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.calls-header {
+  background-color: var(--whatsapp-sidebar-bg);
+  padding: 20px;
+  border-bottom: 1px solid var(--whatsapp-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.calls-header h2 {
+  margin: 0;
+  color: var(--whatsapp-text-primary);
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.new-call-button {
+  background-color: var(--whatsapp-green);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.new-call-button:hover {
+  background-color: var(--whatsapp-dark-green);
+}
+
+.calls-list {
+  flex: 1;
+  overflow-y: auto;
+  background-color: var(--whatsapp-bg);
+}
+
+.call-item {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--whatsapp-border);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.call-item:hover {
+  background-color: var(--whatsapp-hover);
+}
+
+.call-avatar {
+  margin-right: 16px;
+}
+
+.avatar-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--whatsapp-green);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.call-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.call-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--whatsapp-text-primary);
+}
+
+.call-details {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.call-type {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+}
+
+.call-time {
+  color: var(--whatsapp-text-secondary);
+}
+
+.call-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.call-action-button {
+  background-color: transparent;
+  border: none;
+  color: var(--whatsapp-green);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.call-action-button:hover {
+  background-color: var(--whatsapp-hover);
+}
+
+/* Loading State */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--whatsapp-text-secondary);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--whatsapp-border);
+  border-top: 3px solid var(--whatsapp-green);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Error State */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  padding: 40px;
+  color: var(--whatsapp-text-secondary);
+}
+
+.error-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.error-container h3 {
+  color: var(--whatsapp-text-primary);
+  margin-bottom: 8px;
+}
+
+/* Empty State */
+.empty-calls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  padding: 40px;
+  color: var(--whatsapp-text-secondary);
+}
+
+.empty-icon {
+  font-size: 80px;
+  margin-bottom: 24px;
+  opacity: 0.5;
+}
+
+.empty-calls h3 {
+  color: var(--whatsapp-text-primary);
+  margin-bottom: 8px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.empty-calls p {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .calls-header {
+    padding: 16px;
+  }
+  
+  .calls-header h2 {
+    font-size: 20px;
+  }
+  
+  .new-call-button {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+  
+  .call-item {
+    padding: 12px 16px;
+  }
+  
+  .avatar-circle {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+  
+  .call-name {
+    font-size: 15px;
+  }
+  
+  .call-details {
+    font-size: 13px;
+  }
+}

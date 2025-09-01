@@ -1,58 +1,99 @@
-.chat-layout {
-  display: grid;
-  grid-template-columns: 360px 1fr;
-  height: 100vh;
-  background-color: var(--bg);
+/* Desktop Layout */
+.chat-layout-desktop {
+  display: flex;
+  height: 100%;
+  background-color: var(--whatsapp-bg);
+  overflow: hidden;
 }
 
-@media (max-width: 1024px) {
-  .chat-layout {
-    grid-template-columns: 320px 1fr;
-  }
+.chat-sidebar-container {
+  width: 400px;
+  min-width: 320px;
+  max-width: 500px;
+  background-color: var(--whatsapp-sidebar-bg);
+  border-right: 1px solid var(--whatsapp-border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-@media (max-width: 768px) {
-  .chat-layout {
-    grid-template-columns: 1fr;
-  }
-  .chat-window--hidden {
-    display: none;
-  }
-  .sidebar--hidden {
-    display: none;
-  }
+.chat-main-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--whatsapp-chat-bg);
+  overflow: hidden;
 }
 
-.chat-layout {
-  display: grid;
-  grid-template-columns: 360px 1fr;
-  height: 100vh;
-  background-color: var(--bg);
+/* Mobile Layout */
+.chat-layout-mobile {
+  height: 100%;
+  background-color: var(--whatsapp-bg);
+  overflow: hidden;
 }
 
 .welcome-screen {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #222e35;
-  color: #e9edef;
+  height: 100%;
+  background-color: #f0f2f5;
+  color: var(--whatsapp-text-primary);
   text-align: center;
-  border-bottom: 6px solid #00a884;
+  padding: 40px;
+  border-bottom: 6px solid var(--whatsapp-green);
+}
+
+.welcome-content {
+  max-width: 460px;
+  margin: 0 auto;
+}
+
+.welcome-icon {
+  font-size: 120px;
+  margin-bottom: 30px;
+  opacity: 0.3;
 }
 
 .welcome-content h1 {
-  font-size: 2rem;
+  font-size: 36px;
   font-weight: 300;
-  color: #e9edef;
+  color: var(--whatsapp-text-primary);
+  margin-bottom: 20px;
 }
 
 .welcome-content p {
-  font-size: 1rem;
-  color: #8696a0;
-  margin-top: 1rem;
+  font-size: 14px;
+  color: var(--whatsapp-text-secondary);
+  margin-bottom: 16px;
+  line-height: 1.5;
 }
 
 .welcome-content .footer-note {
-  margin-top: 3rem;
-  font-size: 0.875rem;
+  margin-top: 40px;
+  font-size: 13px;
+  color: var(--whatsapp-text-secondary);
+  opacity: 0.8;
 }
+
+@media (max-width: 768px) {
+  .welcome-screen {
+    padding: 20px;
+  }
+
+  .welcome-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+  }
+
+  .welcome-content h1 {
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
+
+  .welcome-content p {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+}
+
