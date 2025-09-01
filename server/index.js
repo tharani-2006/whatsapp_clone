@@ -170,6 +170,18 @@ io.on('connection', (socket) => {
     }
   });
 
+  // Handle new status update
+  socket.on('new_status', (statusData) => {
+    // Broadcast to all connected users (they'll filter on client side)
+    socket.broadcast.emit('new_status', statusData);
+  });
+
+  // Handle status deletion
+  socket.on('status_deleted', (statusId) => {
+    // Broadcast to all connected users
+    socket.broadcast.emit('status_deleted', statusId);
+  });
+
   // Handle user disconnect
   socket.on('disconnect', () => {
     // Remove user from online users
