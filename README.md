@@ -24,7 +24,7 @@ A full-stack WhatsApp clone built with React.js, Node.js, Express, MongoDB, and 
 - Delete own status functionality
 - Real-time status updates for all users
 
-### 🎨 **UI/UX Features**
+### 🎨 **UI Features**
 - WhatsApp-like design and color scheme
 - Responsive design for mobile and desktop
 - Top navigation tabs (Chats, Calls, Status)
@@ -107,9 +107,6 @@ whatsapp-clone/
    JWT_SECRET=your-jwt-secret-key
    PORT=5000
    ```
-
-5. **Start MongoDB**
-   Make sure MongoDB is running on your system.
 
 6. **Run the application**
    
@@ -215,6 +212,3 @@ This project is licensed under the MIT License.
 - MongoDB for database solutions
 - React.js community for excellent documentation
 
----
-
-**Built with ❤️ using React.js and Node.js**
