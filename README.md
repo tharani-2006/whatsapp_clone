@@ -210,3 +210,4 @@ This project is licensed under the MIT License.
 - MongoDB for database solutions
 - React.js community for excellent documentation
 
+//Complete details about project
