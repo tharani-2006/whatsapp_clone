@@ -209,5 +209,3 @@ This project is licensed under the MIT License.
 - Socket.io for real-time communication
 - MongoDB for database solutions
 - React.js community for excellent documentation
-
-//Complete details about project
