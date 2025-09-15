@@ -9,6 +9,7 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const chatRoutes = require('./routes/chat');
+const messageRoutes = require('./routes/messages');
 const Chat = require('./models/Chat');
 const Message = require('./models/Message');
 const CallHistory = require('./models/CallHistory'); // Add this line
@@ -214,6 +215,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Routes
 app.use('/api', authRoutes);
 app.use('/api', chatRoutes);
+app.use('/api/messages', messageRoutes);
 
 app.get('/', (req, res) => res.send('WhatsApp Clone Backend Running'));
 

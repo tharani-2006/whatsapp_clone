@@ -24,7 +24,6 @@ This project is a **WhatsApp Clone** that replicates the core functionalities of
 - **React**: For building the user interface.
 - **Axios**: For making HTTP requests to the backend.
 - **Socket.IO Client**: For real-time communication.
-- **EmailJS**: For sending OTPs via email.
 
 ### Backend:
 - **Node.js**: For building the server.
