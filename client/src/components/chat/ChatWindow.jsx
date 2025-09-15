@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { useSocket } from '../../context/SocketContext';
+import { SocketContext } from '../../context/SocketContext';
 import { useCall } from '../../context/CallContext';
 import axios from '../../utils/axios';
 import './ChatWindow.css';
@@ -11,7 +11,9 @@ const ChatWindow = ({ selectedChat, onBack }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const socket = useSocket();
+  const [editingMessageId, setEditingMessageId] = useState(null);
+  const [editedContent, setEditedContent] = useState('');
+  const socket = useContext(SocketContext);
   const { startCall } = useCall();
   const messagesEndRef = useRef(null);
 
@@ -56,6 +58,21 @@ const ChatWindow = ({ selectedChat, onBack }) => {
     };
   }, [socket, selectedChat?._id]);
 
+  // Listen for real-time message edits
+  useEffect(() => {
+    socket.on('messageEdited', (updatedMessage) => {
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg._id === updatedMessage._id ? updatedMessage : msg
+        )
+      );
+    });
+
+    return () => {
+      socket.off('messageEdited');
+    };
+  }, [socket]);
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!newMessage.trim() || !selectedChat) return;
@@ -73,6 +90,31 @@ const ChatWindow = ({ selectedChat, onBack }) => {
       scrollToBottom();
     } catch (err) {
       console.error('Error sending message:', err);
+    }
+  };
+
+  const handleEditClick = (messageId, currentContent) => {
+    setEditingMessageId(messageId);
+    setEditedContent(currentContent);
+  };
+
+  const handleEditSubmit = async (messageId) => {
+    try {
+      const response = await axios.put(`/api/messages/edit/${messageId}`, {
+        content: editedContent,
+      });
+
+      // Update the message locally
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg._id === messageId ? response.data.data : msg
+        )
+      );
+
+      setEditingMessageId(null);
+      setEditedContent('');
+    } catch (error) {
+      console.error('Error editing message:', error);
     }
   };
 
@@ -153,7 +195,30 @@ const ChatWindow = ({ selectedChat, onBack }) => {
                 key={message._id}
                 className={`message ${message.sender._id === user.id ? 'sent' : 'received'}`}
               >
-                <div className="message-content">{message.content}</div>
+                {editingMessageId === message._id ? (
+                  <div className="edit-message">
+                    <input
+                      type="text"
+                      value={editedContent}
+                      onChange={(e) => setEditedContent(e.target.value)}
+                    />
+                    <button onClick={() => handleEditSubmit(message._id)}>Save</button>
+                    <button onClick={() => setEditingMessageId(null)}>Cancel</button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="message-content">{message.content}</div>
+                    {message.edited && <small>(edited)</small>}
+                    {message.sender._id === user.id && (
+                      <button
+                        className="edit-button"
+                        onClick={() => handleEditClick(message._id, message.content)}
+                      >
+                        Edit
+                      </button>
+                    )}
+                  </>
+                )}
                 <div className="message-time">
                   {new Date(message.createdAt).toLocaleTimeString()}
                 </div>

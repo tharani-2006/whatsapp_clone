@@ -1,8 +1,9 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from './AuthContext';
 
-const SocketContext = createContext(null);
+const socket = io('http://localhost:3000'); // Replace with your backend URL
+export const SocketContext = createContext(socket);
 
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
