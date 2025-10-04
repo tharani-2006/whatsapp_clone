@@ -58,8 +58,8 @@ const Register = () => {
         <div className="header-content">
           <div className="header-logo">
             <img 
-              src="./images/whatsapp.png" 
-              alt="WhatsApp" 
+              src="https://logos-world.net/wp-content/uploads/2020/05/Logo-WhatsApp.png" 
+              alt=""  
               className="logo-image"
             />
             <span className="logo-text">WhatsApp</span>
