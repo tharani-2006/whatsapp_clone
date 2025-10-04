@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const http = require('http');
-const { Server } = require('socket.io');
+const socketIo = require('socket.io');
 const { setIO } = require('./utils/io');
 const path = require('path');
 require('dotenv').config();
@@ -17,13 +17,14 @@ const CallHistory = require('./models/CallHistory'); // Add this line
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
+const io = socketIo(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
-    methods: ["GET", "POST"]
-  }
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
 });
-setIO(io);
+setIO(io); // Set the io instance globally
+app.set('socketio', io); // Make io available in routes
 
 // Store online users
 const onlineUsers = new Map();

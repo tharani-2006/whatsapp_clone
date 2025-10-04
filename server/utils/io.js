@@ -1,13 +1,10 @@
-let ioInstance = null;
+let io;
 
-function setIO(io) {
-  ioInstance = io;
-}
+const setIO = (socketIoInstance) => {
+  io = socketIoInstance;
+};
 
-function getIO() {
-  if (!ioInstance) throw new Error('Socket.io instance not set');
-  return ioInstance;
-}
+const getIO = () => io;
 
 module.exports = { setIO, getIO };
 
