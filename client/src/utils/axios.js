@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an axios instance with the base URL for your backend API
 const instance = axios.create({
-  baseURL: 'http://localhost:5000/api', // Ensure this matches your backend server's base URL
+  baseURL: 'https://whatsapp-clone-backend-y22e.onrender.com/api', // Ensure this matches your backend server's base URL
 });
 
 // Add a request interceptor to include the token in the Authorization header
