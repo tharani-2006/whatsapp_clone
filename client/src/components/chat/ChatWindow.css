@@ -133,6 +133,37 @@
   line-height: 1.4;
 }
 
+.edit-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  font-size: 14px;
+  color: #128C7E;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.message:hover .edit-button {
+  opacity: 1;
+}
+
+.edited-tag {
+  font-size: 11px;
+  color: #667781;
+  margin-left: 5px;
+  font-style: italic;
+}
+
 .message-time {
   font-size: 11px;
   color: #667781;

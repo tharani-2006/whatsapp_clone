@@ -24,7 +24,7 @@ const ChatWindow = ({ selectedChat, onBack }) => {
       
       setLoading(true);
       try {
-        const response = await axios.get(`/chat/${selectedChat._id}/messages`);
+        const response = await axios.get(`/messages/chat/${selectedChat._id}`);
         setMessages(response.data);
         scrollToBottom();
       } catch (err) {
@@ -78,9 +78,10 @@ const ChatWindow = ({ selectedChat, onBack }) => {
     if (!newMessage.trim() || !selectedChat) return;
 
     try {
-      const response = await axios.post('/message', {
+      const response = await axios.post('/messages', {
         chatId: selectedChat._id,
-        content: newMessage
+        content: newMessage,
+        receiver: selectedChat.participants.find(p => p._id !== user?.id)?._id
       });
 
       // Update local state and emit after set
@@ -100,7 +101,7 @@ const ChatWindow = ({ selectedChat, onBack }) => {
 
   const handleEditSubmit = async (messageId) => {
     try {
-      const response = await axios.put(`/api/messages/edit/${messageId}`, {
+      const response = await axios.put(`/messages/edit/${messageId}`, {
         content: editedContent,
       });
 
@@ -193,7 +194,7 @@ const ChatWindow = ({ selectedChat, onBack }) => {
             {messages.map(message => (
               <div
                 key={message._id}
-                className={`message ${message.sender._id === user.id ? 'sent' : 'received'}`}
+                className={`message ${message.sender?._id === user?.id ? 'sent' : 'received'}`}
               >
                 {editingMessageId === message._id ? (
                   <div className="edit-message">
@@ -208,13 +209,14 @@ const ChatWindow = ({ selectedChat, onBack }) => {
                 ) : (
                   <>
                     <div className="message-content">{message.content}</div>
-                    {message.edited && <small>(edited)</small>}
-                    {message.sender._id === user.id && (
+                    {message.edited && <small className="edited-tag">(edited)</small>}
+                    {message.sender?._id === user?.id && (
                       <button
                         className="edit-button"
                         onClick={() => handleEditClick(message._id, message.content)}
+                        title="Edit message"
                       >
-                        Edit
+                        ✎
                       </button>
                     )}
                   </>
