@@ -9,5 +9,4 @@ const messageSchema = new mongoose.Schema({
   edited: { type: Boolean, default: false }, // New field to track if the message was edited
   editedAt: { type: Date } // New field to store the timestamp of the edit
 });
-
 module.exports = mongoose.model('Message', messageSchema);
