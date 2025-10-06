@@ -46,8 +46,7 @@ A full-stack WhatsApp clone built with React.js, Node.js, Express, MongoDB, and 
 - **Mongoose** - MongoDB ODM
 - **Socket.io** - Real-time communication
 - **JWT** - Authentication
-- **Multer** - File upload handling
-- **bcryptjs** - Password hashing
+
 
 ## 📁 Project Structure
 
