@@ -73,11 +73,6 @@ whatsapp-clone/
 
 ## 🚀 Getting Started
 
-### Prerequisites
-- Node.js (v14 or higher)
-- MongoDB (local or cloud)
-- npm or yarn
-
 ### Installation
 
 1. **Clone the repository**
