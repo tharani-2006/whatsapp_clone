@@ -126,10 +126,7 @@ socket.on('call_user', async (data) => {
 
 The rest (`call_accepted`, `call_rejected`, `call_ended`) just send status updates back and forth.
 
-**Interview Tip 💬:**
 
-> “I implemented call signaling using Socket.IO events. When a user initiates a call, a signal is sent to the recipient’s socket, and call events like accepted/rejected/ended are handled in real time.”
-> 
 
 ---
 
@@ -151,12 +148,7 @@ socket.on('offer', (data) => {
 
 Socket.IO here acts like a **messenger** to exchange technical info between peers before the video/audio call starts.
 
-**Interview Tip 💬:**
 
-> “Socket.IO is used as a signaling server for WebRTC. It doesn’t handle the media stream itself but helps both peers exchange session data required to establish the peer-to-peer call.”
-> 
-
----
 
 ## 💭 6. **Messaging (Core Chat Functionality)**
 
@@ -191,10 +183,6 @@ socket.on('typing', (data) => {
 
 ✅ Sends a “typing…” indicator to the chat partner.
 
-**Interview Tip 💬:**
-
-> “I implemented a typing event to enhance UX — when a user types, the event notifies others in that chat instantly.”
-> 
 
 ---
 
@@ -230,10 +218,6 @@ socket.on('disconnect', () => {
 - Ends any active calls
 - Notifies others if needed
 
-**Interview Tip 💬:**
-
-> “On disconnect, I remove the user’s socket from the online list and handle cleanup for any ongoing calls or sessions.”
-> 
 
 
 ---
@@ -343,3 +327,167 @@ exports.createMessage = async (req, res) => {
 ```
 
 Without `setIO` / `getIO`, you wouldn’t have access to the `io` instance here.
+
+## 2. Flow of JWT in your project
+
+Let’s look at your complete flow 👇
+
+---
+
+### 🧾 Step 1 — User Registration (`/register`)
+
+When a user registers:
+
+```jsx
+const hashedPassword = await bcrypt.hash(password, 10);
+user = new User({ email, password: hashedPassword, name, phone });
+await user.save();
+
+```
+
+✅ What happens:
+
+- You **hash** the password using `bcrypt` for security.
+- You save the new user in MongoDB.
+- No JWT is created yet — because the user has just signed up, not logged in.
+
+---
+
+### 🔐 Step 2 — User Login (`/login`)
+
+When the user logs in:
+
+```jsx
+const token = jwt.sign(
+  { userId: user._id },
+  process.env.JWT_SECRET,
+  { expiresIn: '1d' }
+);
+
+```
+
+✅ What happens:
+
+1. Server checks user’s email & password.
+2. If correct, it **creates a JWT token** using:
+    - `jwt.sign(payload, secret, options)`
+    - **Payload** = `{ userId: user._id }`
+    - **Secret** = `process.env.JWT_SECRET`
+    - **Expiry** = `1 day`
+3. The token is sent back to the client.
+
+Example token returned:
+
+```
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+```
+
+---
+
+### 💾 Step 3 — Client stores the token
+
+On the **frontend**, the token is usually stored in:
+
+- `localStorage`, or
+- `sessionStorage`, or
+- an `HTTP-only cookie` (for high security)
+
+Whenever the frontend makes a request (like fetching chats), it attaches:
+
+```
+Authorization: Bearer <token>
+
+```
+
+---
+
+### 🧠 Step 4 — Auth Middleware (JWT verification)
+
+Now your middleware (`auth.js`) runs before protected routes.
+
+```jsx
+const token = req.header('Authorization').replace('Bearer ', '');
+const decoded = jwt.verify(token, process.env.JWT_SECRET);
+const user = await User.findById(decoded.userId);
+
+```
+
+✅ What happens:
+
+1. Reads the token from `Authorization` header.
+2. Removes the word `Bearer` .
+3. Verifies the token using your secret key.
+4. If valid, decodes it → gets `{ userId: ... }`.
+5. Fetches the actual user from MongoDB.
+6. Attaches the user to `req.user` and calls `next()`.
+
+If verification fails → responds with `401 Unauthorized`.
+
+---
+
+### 🛡️ Step 5 — Protecting Routes
+
+In your backend routes, you can protect sensitive endpoints like this:
+
+```jsx
+const auth = require('../middleware/auth');
+
+router.get('/user/profile', auth, async (req, res) => {
+  res.json(req.user);
+});
+
+```
+
+✅ Result:
+
+- If token is valid → user can access their data.
+- If not → request is rejected (`401 Please authenticate`).
+
+---
+
+## 🔐 Step 6 — JWT_SECRET
+
+In `.env`:
+
+```
+JWT_SECRET=NACU6mO0G5Ze/YWkYJdDj36/XhWOuRCbp7S51EMs++g=
+
+```
+
+This secret is used for:
+
+- **Signing** the token when the user logs in.
+- **Verifying** the token on every protected request.
+
+It should be a strong, unpredictable string — never committed to GitHub.
+
+---
+
+## 🧠 How JWT Works (Internally)
+
+A JWT has **3 parts**, separated by dots:
+
+```
+HEADER.PAYLOAD.SIGNATURE
+
+```
+
+### Example:
+
+```
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+.
+eyJ1c2VySWQiOiIxMjM0NTY3OCIsImlhdCI6MTY5NTUyMTI1M30
+.
+iuiDSnlfhG6H4TzB4URFQ-WUmt1eYIYkZ6Hd_mNqT8M
+
+```
+
+| Part | Meaning |
+| --- | --- |
+| Header | Algorithm & token type |
+| Payload | Data (like userId) |
+| Signature | Encrypted hash of the first two using your secret |
+
+When verifying, the server checks that the **signature matches** — if not, the token is invalid or tampered with.
