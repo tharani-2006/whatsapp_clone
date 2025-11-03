@@ -491,3 +491,20 @@ iuiDSnlfhG6H4TzB4URFQ-WUmt1eYIYkZ6Hd_mNqT8M
 | Signature | Encrypted hash of the first two using your secret |
 
 When verifying, the server checks that the **signature matches** — if not, the token is invalid or tampered with.
+
+
+
+
+## Profile Picture Upload (Multer)
+
+This project uses Multer middleware for handling image uploads.
+
+Storage: Files are saved in the /uploads/profiles folder.
+
+File naming: Each file is renamed with a timestamp to avoid duplicates.
+
+Limits: Max size 5MB; only .jpg, .jpeg, and .png formats are allowed.
+
+Usage: In routes, upload.single('profilePic') is used to upload a single image.
+
+Access: The uploaded image path is stored in MongoDB and can be served via /uploads route.
