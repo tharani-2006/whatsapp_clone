@@ -97,7 +97,6 @@ So when someone sends a message → it’s only broadcast to users in that room.
 
 If two users are chatting in room `chat_1`, messages sent in that room won’t reach others.
 
-**Interview Tip 💬:**
 
 > “I used Socket.IO’s built-in room feature to isolate conversations. This way, messages are only broadcasted to users in the same chat room.”
 > 
