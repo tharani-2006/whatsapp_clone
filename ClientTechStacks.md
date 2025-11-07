@@ -40,3 +40,32 @@ Automatically reconnects on network issues
 Emits user_connected for online tracking
 
 Provides useSocket() hook for easy access in any component
+
+## File: context/CallContext.jsx
+
+=> Description:
+Manages all voice and video call features using WebRTC and Socket.IO inside a React Context.
+
+=> Functions:
+
+Starts, receives, accepts, and ends calls
+git
+Handles audio/video streams
+
+Shares call state across the app
+
+Manages mute/unmute and camera toggle
+
+Exchanges ICE candidates for direct connection
+
+=> Key Points:
+
+Uses WebRTC for real-time media
+
+Uses Socket.IO for call signaling
+
+ICE candidates help browsers find best connection paths
+
+Cleans up when call ends
+
+Accessible anywhere with useCall() hook
