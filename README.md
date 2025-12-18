@@ -1,205 +1,109 @@
-# WhatsApp Clone
+# 💬 WhatsApp Clone
 
-A full-stack WhatsApp clone built with React.js, Node.js, Express, MongoDB, and Socket.io featuring real-time messaging, voice/video calls, and status updates.
+**Real-time messaging application with WebRTC voice/video calls, status updates, and JWT authentication.**
 
-## 🚀 Features
+---
 
-### 💬 **Chat Features**
-- Real-time messaging with Socket.io
-- User authentication (Login/Register)
-- Chat history and message persistence
-- WhatsApp-like UI with sidebar and chat window
-- Message timestamps and delivery status
+##  Project Overview
 
-### 📞 **Call Features**
-- Voice and video calling
-- Call history tracking
-- Call status indicators (missed, incoming, outgoing)
-- Real-time call notifications
+Full-stack messaging app built with React and Node.js. Handles real-time chat via Socket.IO, WebRTC calls, status updates, and JWT auth. Users register, upload profile pics, search contacts, and track call history. Backend uses MongoDB with Express APIs; frontend is React with Tailwind CSS. Messages persist in the database while Socket.IO handles live delivery.
 
-### 📊 **Status Features**
-- 24-hour auto-expiring status updates
-- Text and image status support
-- Status view modal with full content display
-- Delete own status functionality
-- Real-time status updates for all users
+---
 
-### 🎨 **UI Features**
-- WhatsApp-like design and color scheme
-- Responsive design for mobile and desktop
-- Top navigation tabs (Chats, Calls, Status)
-- Professional modal interfaces
-- Loading states and error handling
+##  Key Features
+
+- **Real-time messaging** — Instant message delivery using Socket.IO with typing indicators
+- **Voice & video calls** — WebRTC-based peer-to-peer communication with call history tracking
+- **Status updates** — Share temporary status posts visible to all contacts
+- **User authentication** — JWT-based secure login with email verification via EmailJS
+- **Profile management** — Upload profile pictures, update name and about section
+- **Contact search** — Find and add users by email or phone number
+
+---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- **React.js** - UI framework
-- **Socket.io-client** - Real-time communication
-- **Axios** - HTTP client
-- **CSS3** - Styling with WhatsApp-like design
+- **React 19** — UI framework
+- **React Router DOM** — Client-side routing
+- **Tailwind CSS** — Styling
+- **Socket.IO Client** — Real-time WebSocket communication
+- **Axios** — HTTP client for API requests
 
 ### Backend
-- **Node.js** - Runtime environment
-- **Express.js** - Web framework
-- **MongoDB** - Database
-- **Mongoose** - MongoDB ODM
-- **Socket.io** - Real-time communication
-- **JWT** - Authentication
+- **Node.js** — Runtime environment
+- **Express.js** — Web framework
+- **Socket.IO** — Real-time bidirectional communication
+- **JWT** — Authentication tokens
+- **bcryptjs** — Password hashing
+- **Multer** — File upload handling
 
+### Database
+- **MongoDB** — NoSQL database with Mongoose ODM
 
-## 📁 Project Structure
+### Tools
+- **WebRTC** — Peer-to-peer media streaming
+- **EmailJS** — Email verification service
+- **Nodemon** — Development server auto-reload
 
-```
-whatsapp-clone/
-├── client/                 # React frontend
-│   ├── src/
-│   │   ├── components/     # React components
-│   │   │   ├── chat/       # Chat-related components
-│   │   │   ├── call/       # Call-related components
-│   │   │   └── ...
-│   │   ├── context/        # React context providers
-│   │   ├── utils/          # Utility functions
-│   │   └── App.js          # Main app component
-│   └── public/
-├── server/                 # Node.js backend
-│   ├── models/             # MongoDB models
-│   ├── routes/             # API routes
-│   ├── middleware/         # Custom middleware
-│   ├── uploads/            # File uploads
-│   └── index.js            # Server entry point
-└── README.md
-```
+---
 
-## 🚀 Getting Started
+##  Architecture 
 
-### Installation
+React frontend sends HTTP requests to Express backend for auth and data operations. Socket.IO manages real-time events (messages, calls, status). MongoDB persists users, messages, chats, and call logs. WebRTC calls use Socket.IO for signaling (offer/answer/ICE candidates) before establishing peer-to-peer connections. JWT middleware protects routes by validating tokens on each request.
 
-1. **Clone the repository**
+---
+
+## Screenshots 
+
+Screenshot 2025-09-15 005808.png
+Screenshot 2025-09-15 005928.png
+Screenshot 2025-09-15 005903.png
+
+## 🚀 Setup Instructions
+
+1. **Clone and install dependencies:**
    ```bash
    git clone <repository-url>
-   cd whatsapp-clone
+   cd whatsapp
    ```
 
-2. **Install server dependencies**
+2. **Backend setup:**
    ```bash
    cd server
    npm install
    ```
-
-3. **Install client dependencies**
-   ```bash
-   cd ../client
-   npm install
+   Create `.env` file:
    ```
-
-4. **Environment Setup**
-   
-   Create a `.env` file in the `server` directory:
-   ```env
-   MONGODB_URI=mongodb://localhost:27017/whatsapp-clone
-   JWT_SECRET=your-jwt-secret-key
+   MONGO_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret_key
    PORT=5000
    ```
+   Start server: `npm start` (or `npm run dev` for nodemon)
 
-6. **Run the application**
-   
-   **Start the server** (in `server` directory):
+3. **Frontend setup:**
    ```bash
-   npm start
-   # or
-   node index.js
-   ```
-   
-   **Start the client** (in `client` directory):
-   ```bash
+   cd client
+   npm install
    npm start
    ```
+   Update API base URL in `src/utils/axios.js` if backend runs on different port
 
+4. **Open** `http://localhost:3000` in your browser
 
+---
 
-## 📱 How to Use
+##  Notes
 
-### 1. **Authentication**
-- Register a new account or login with existing credentials
-- JWT-based authentication with secure password hashing
+- **MongoDB:** Run locally or use MongoDB Atlas (update `MONGO_URI` in `.env`)
+- **EmailJS:** Configure credentials in `client/src/utils/emailjsConfig.js` for OTP verification
+- **Ports:** Backend defaults to `5000`, frontend to `3000`
+- **File storage:** Profile pics and status images saved in `server/uploads/` directory
+- **JWT:** Token expires after 1 day (configurable in `server/routes/auth.js`)
 
-### 2. **Chatting**
-- Navigate to the "Chats" tab
-- Select a user from the sidebar to start chatting
-- Send real-time messages with instant delivery
-
-### 3. **Voice/Video Calls**
-- Navigate to the "Calls" tab to view call history
-- Initiate calls from chat interface
-- View call status and duration
-
-### 4. **Status Updates**
-- Navigate to the "Status" tab
-- Click the camera button (📷) to add a new status
-- Add text, images, or both
-- View others' status by clicking on them
-- Delete your own status with the delete button (🗑️)
-- Status automatically expires after 24 hours
-
-## 🔧 API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - User login
-
-### Chat
-- `GET /api/chats` - Get user's chats
-- `POST /api/chats` - Create new chat
-- `GET /api/chats/:id/messages` - Get chat messages
-- `POST /api/chats/:id/messages` - Send message
-
-### Status
-- `GET /api/status` - Get all status updates
-- `POST /api/status` - Create new status
-- `DELETE /api/status/:id` - Delete status
-
-### Calls
-- `GET /api/callHistory` - Get call history
-
-## 🌟 Key Features Explained
-
-### Real-time Communication
-- Socket.io enables instant messaging and status updates
-- Real-time typing indicators and online status
-- Live call notifications and status updates
-
-### File Upload
-- Multer handles image uploads for status updates
-- Images stored in `server/uploads/statuses/`
-- Support for PNG, JPG, JPEG formats (max 5MB)
-
-### Authentication & Security
-- JWT tokens for secure authentication
-- Password hashing with bcryptjs
-- Protected routes and middleware
-
-### Database Design
-- User model with authentication fields
-- Chat and Message models for messaging
-- Status model with 24-hour expiry
-- Call history tracking
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+---
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+ISC
 
-## 🙏 Acknowledgments
-
-- WhatsApp for design inspiration
-- Socket.io for real-time communication
-- MongoDB for database solutions
-- React.js community for excellent documentation
