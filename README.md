@@ -56,9 +56,12 @@ React frontend sends HTTP requests to Express backend for auth and data operatio
 
 ## Screenshots 
 
-Screenshot 2025-09-15 005808.png
-Screenshot 2025-09-15 005928.png
-Screenshot 2025-09-15 005903.png
+<img width="1842" height="965" alt="Screenshot 2025-09-15 005808" src="https://github.com/user-attachments/assets/31d8bdec-7dd7-4ef6-8fb6-45495fb43be5" />
+
+<img width="1851" height="972" alt="Screenshot 2025-09-15 005928" src="https://github.com/user-attachments/assets/3a702028-7aad-408c-a249-482067b5c29e" />
+
+<img width="1850" height="948" alt="Screenshot 2025-09-15 005903" src="https://github.com/user-attachments/assets/b5cf1b76-f4d2-49db-b460-f7959d6519db" />
+
 
 ## 🚀 Setup Instructions
 
